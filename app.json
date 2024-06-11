@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "My Loan",
+    "slug": "MyLoan_Android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/myloanIcon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/myloanIcon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#11015C"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
