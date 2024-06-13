@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'; 
 
 export default function Buttons({ textoBoton, accionBoton, color }) {
     // Definimos un objeto con los colores

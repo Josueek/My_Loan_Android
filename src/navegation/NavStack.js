@@ -1,8 +1,8 @@
-// src/navegation/NavStack.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '../screens/Splash';
 import LoginScreen from '../screens/LoginScreen';
+import InstructorcfpStack from './NavegationCFP/InstructorcfpStack';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +17,11 @@ const NavStack = () => {
             <Stack.Screen
                 name="Login"
                 component={LoginScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="InstructorcfpStack"
+                component={InstructorcfpStack}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
