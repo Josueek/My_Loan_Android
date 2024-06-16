@@ -1,7 +1,7 @@
 
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
-export default function Input({ placeHolder, Valor, contra, setTextChange, editable = true }) {
+export default function InputShort({ placeHolder, Valor, contra, setTextChange, editable = true }) {
   // Componente para establecer un estilo de input general en todo el proyecto
   return (
 
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color: "#000",
     fontWeight: '200',
-    width: 250,
+    width: 175,
     borderRadius: 20,
     borderColor: '#000',
     height: 45,  // Ajustar la altura
