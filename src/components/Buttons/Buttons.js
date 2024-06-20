@@ -20,7 +20,7 @@ export default function Buttons({ textoBoton, accionBoton, color }) {
 const styles = StyleSheet.create({
     button: {
         borderWidth: 1,
-        width: 200,
+        width: 185,
         borderRadius: 13,
         padding: 10,
         marginVertical: 5

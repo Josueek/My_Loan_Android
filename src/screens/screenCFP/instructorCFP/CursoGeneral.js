@@ -9,6 +9,7 @@ const CursoGeneral = () => {
     const [curso, setCurso] = useState('Curso de enca');
     return (
         <View style={styles.container}>
+            {/*Usamos row y colum para posicionar los input en dos columnas*/}
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Nombre del curso:</Text>

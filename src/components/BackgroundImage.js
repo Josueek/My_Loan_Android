@@ -6,9 +6,12 @@ const BackgroundImage = ({ children, background }) => {
     const backgrounds = {
         //Aca se manejan los diferentes fondos para el proyecto
         login: require('../../assets/FondosScreen/splashFondo.png'),
-         /*Fondos para la pantalla de instructores CFP*/
-         InstructorCFPC: require('../../assets/FondosScreen/CodigoInstructorSceen.png'),
-         CursoInstructor: require('../../assets/FondosScreen/screenCursoInstructor.png')
+        /*Fondos para la pantalla de instructores CFP*/
+        InstructorCFPC: require('../../assets/FondosScreen/CodigoInstructorSceen.png'),
+        CursoInstructor: require('../../assets/FondosScreen/screenCursoInstructor.png'),
+        LabInstructor: require('../../assets/FondosScreen/LabGeneralScreen.png'),
+        /* Fondos para adminstradores CFP */
+        AdminCFP: require('../../assets/FondosScreen/adminSplash.png')
     };
 
     return (

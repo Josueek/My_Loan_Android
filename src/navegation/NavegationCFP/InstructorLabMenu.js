@@ -1,35 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//Importamos las pantallas a mostrar 
-import CursoGeneral from '../../screens/screenCFP/instructorCFP/CursoGeneral';
-import CursoDetalle from '../../screens/screenCFP/instructorCFP/CursoDetalle';
-//Libreria para implementar el tab
+//Importamos las pantallas
+import LabGeneral from '../../screens/screenCFP/instructorCFP/LabGeneral';
+import LabDetalle from '../../screens/screenCFP/instructorCFP/LabDetalle';
+//Libreria para implementar las pestañas
 import { TabControl } from 'rn-segmented-tab-controls';
-//Compoenente para definir el fondo de la pantalla
+//Componente para definir el fondo de pantalla 
 import BackgroundImage from '../../components/BackgroundImage';
 /*En esta pantalla se muestra un menu tipo tab para cambiar de pantalla*/
-const InstructorCursoMenu = () => {
-    //Definimos los valores de la pestaña
+const InstructorLabMenu = () => {
+    //Definimos las opciones de la pestaña
     const values = [
-        { key: "General", renderItem: CursoGeneral },
-        { key: "Detalle", renderItem: CursoDetalle },
+        { key: "General", renderItem: LabGeneral },
+        { key: "Detalle", renderItem: LabDetalle },
     ];
 
     const navigation = useNavigation();
 
     return (
-        <BackgroundImage background="CursoInstructor">
+        <BackgroundImage background="LabInstructor">
             <View style={styles.container}>
                 <Image
                     source={require('../../../assets/myloanLogo.png')}
                     style={styles.logo} />
 
-                <TabControl values={values} style={styles.tabControl} 
-                activeTabStyle={{ backgroundColor: '#000' }}  
-                inactiveTabStyle={{ backgroundColor: '#000' }}
-                font/>
-
+                <TabControl values={values} style={styles.tabControl}
+                    activeTabStyle={{ backgroundColor: '#000' }}
+                    inactiveTabStyle={{ backgroundColor: '#000' }}
+                    font />
             </View>
         </BackgroundImage>
     );
@@ -56,4 +55,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default InstructorCursoMenu;
+export default InstructorLabMenu;

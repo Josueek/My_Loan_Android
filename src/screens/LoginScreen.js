@@ -10,16 +10,18 @@ import Buttons from '../components/Buttons/Buttons';
 //Login basico para iniciar sesion 
 const authenticateUser = (Usuario, clave) => {
     if (Usuario === 'aa' && clave === '123') {
-        return { institucion: 'CFP', level: 'instructor' };
-    } else if (Usuario === 'AdminCFP' && clave === '123') {
-        return { institucion: 'CFP', level: 'admin' };
+        return { institucion: 'CFP', level: 'instructorcfp' };
+    } else if (Usuario === 'ee' && clave === '123') {
+        return { institucion: 'CFP', level: 'admincfp' };
+    } else if (Usuario === 'ii' && clave === '123') {
+        return { institucion: 'itr', level: 'admin' };
     } else {
         return null;
     }
 };
 
 export default function LoginScreen({ navigation }) {
-    const [Usuario, setUsuario] = useState('aa');
+    const [Usuario, setUsuario] = useState('ee');
     const [clave, setClave] = useState('123');
 
     const IniciarSesion = () => {
@@ -27,8 +29,11 @@ export default function LoginScreen({ navigation }) {
         const user = authenticateUser(Usuario, clave);
         if (user) {
             console.log("Propiedad", JSON.stringify(user));
-            if (user.institucion === 'CFP') {
+
+            if (user.level === 'instructorcfp') {
                 navigation.navigate('InstructorcfpStack');
+            } else if (user.level === 'admincfp') {
+                navigation.navigate('AdmincfpStack');
             } else {
                 Alert.alert('Error', 'Institución no reconocida');
             }

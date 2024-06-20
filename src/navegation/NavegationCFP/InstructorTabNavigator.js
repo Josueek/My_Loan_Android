@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import InstructorCursoMenu from '../../navegation/NavegationCFP/InstructorCursoMenu';
-import LabGeneral from '../../screens/screenCFP/instructorCFP/LabGeneral';
+import LabGeneral from '../../navegation/NavegationCFP/InstructorLabMenu';
 
 const Tab = createBottomTabNavigator();
 

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontFamily: 'Poppins',
     color: "#000",
-    fontWeight: '200',
+    fontWeight: '300',
     width: 175,
     borderRadius: 20,
     borderColor: '#000',
