@@ -35,7 +35,7 @@ const Data = [
 
         id: '4',
         Nombre: 'Curso de Eca',
-        estado: 'Activo',
+        estado: 'Inactivo',
         Codigo: 'ASAS51',
         FechaInicio: '20/06/2024',
         Instructor: 'Wilfredo Granados',

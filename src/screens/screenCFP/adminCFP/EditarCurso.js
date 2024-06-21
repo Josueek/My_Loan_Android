@@ -1,4 +1,4 @@
-// src/screens/CrearCursoScreen.js
+// src/screens/SplashScreen.js
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -14,7 +14,7 @@ import InputNumer from '../../../components/Inputs/InputNumer';
 import Buttons from '../../../components/Buttons/Buttons';
 
 //Agregamos cursos desde esta pantalla
-export default function CrearCursoScreen() {
+export default function EdiarCurso() {
     const [curso, setCurso] = useState('Curso de enca');
     //Datos para llenar los combobox
     const items = [
@@ -160,7 +160,7 @@ export default function CrearCursoScreen() {
                     <View style={styles.column}>
                         <Buttons
                             color={"Amarillo"}
-                            textoBoton={'Agregar'} />
+                            textoBoton={'Editar'} />
                     </View>
                     <View style={styles.column}>
                         <Buttons

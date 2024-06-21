@@ -4,13 +4,16 @@ Librerias utilizadas npx expo install @react-navigation/native @react-navigation
 npm install @react-navigation/bottom-tabs
 npm install @react-native-picker/picker
 
-Integrantes A1
+Integrantes A2
 
 Josué Abdel Ortiz Deodanes
 Brandon Daniel Sanchez Santamaria
 Rebeca Patricia Monico Alfaro
 Lennyn Emmanuel Vides Perez
 Dylan Alexander Sanchez Cordoba
+
+
+
 Estandares de programación generales para mantener las buenas practicas en el android
 
 Nombre de los archivos: Cuando se nombran porfavor colocar el nombre de la pantalla en el figma de la pantalla correspondiente.

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins',
         color: "#000",
         fontWeight: '200',
-        width: 250,
+        width: 325,
         borderRadius: 20,
         borderColor: '#000',
         height: 45,  // Ajustar la altura

@@ -21,7 +21,7 @@ const authenticateUser = (Usuario, clave) => {
 };
 
 export default function LoginScreen({ navigation }) {
-    const [Usuario, setUsuario] = useState('ee');
+    const [Usuario, setUsuario] = useState('');
     const [clave, setClave] = useState('123');
 
     const IniciarSesion = () => {

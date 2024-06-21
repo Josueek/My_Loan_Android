@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 // Componente para el fondo de pantalla
 import BackgroundImage from '../../../components/BackgroundImage';
@@ -7,6 +7,9 @@ import BackgroundImage from '../../../components/BackgroundImage';
 import Data from '../../../data/dataCFP/CursosCFP';
 //Componente boton
 import Button from '../../../components/Buttons/Buttons';
+//Libreria de iconos
+import Icon from 'react-native-vector-icons/Ionicons';
+
 // Pantalla que muestra todos los cursos 
 const CursoScreen = () => {
     const navigation = useNavigation();
@@ -15,12 +18,29 @@ const CursoScreen = () => {
     const AgregarCurso = () => {
         navigation.navigate('CrearCursosScreen');
     }
+    //Accion del boton
+    const EliminarCurso = () => {
+        //Cuando se preciona el boton mandamos una alerta
+        Alert.alert(
+            "Confirmación",
+            "¿Deseas Eliminar este curso?",
+            [
+                {
+                    text: "Cancelar",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => console.log("OK Pressed") }
+            ]
+        );
+    }
+
     // Estilo de la carta renderizada
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
                 style={styles.cardContainer}
-                onPress={() => navigation.navigate('CrearCursosScreen', { item })}
+                onPress={() => navigation.navigate('EditarCurso', { item })}
             >
                 <View style={styles.header}>
                     <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
@@ -31,6 +51,11 @@ const CursoScreen = () => {
                 <View style={styles.footer}>
                     <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
                     <Text style={styles.fecha}>Inicio: {item.FechaInicio}</Text>
+                    <TouchableOpacity style={styles.botontrash}
+                    onPress={EliminarCurso}>
+                        <Icon name="trash" size={20} color="#fff" />
+                    </TouchableOpacity>
+
                 </View>
             </TouchableOpacity>
         );
@@ -75,14 +100,14 @@ const styles = StyleSheet.create({
     cardContainer: {
         backgroundColor: '#fff',
         borderRadius: 10,
-        padding: 10,
+        padding: 20,
         marginHorizontal: 15,
         shadowColor: '#000',
         shadowOpacity: 0.2,
         shadowRadius: 5,
         elevation: 3,
-        width: 350,
-        height: 150,
+        width: 375,
+        height: 170,
         marginBottom: 30,
     },
     header: {
@@ -138,6 +163,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 20,
         textAlign: 'center',
+    }, botontrash: {
+        backgroundColor: '#ff0000',
+        width: 30,
+        height: 25,
+        borderRadius: 5,
+        padding: 3,
+        paddingLeft: 5,
+        alignContent: 'center',
     }
 });
 
