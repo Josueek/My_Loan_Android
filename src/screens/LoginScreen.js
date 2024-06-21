@@ -7,8 +7,9 @@ import Input from '../components/Inputs/TextInput';
 //Componente Button
 import Buttons from '../components/Buttons/Buttons';
 
-//Login basico para iniciar sesion 
+// Función para autenticar al usuario
 const authenticateUser = (Usuario, clave) => {
+    // Verifica las credenciales y retorna un objeto con información del usuario si coinciden
     if (Usuario === 'aa' && clave === '123') {
         return { institucion: 'CFP', level: 'instructorcfp' };
     } else if (Usuario === 'ee' && clave === '123') {
@@ -16,20 +17,23 @@ const authenticateUser = (Usuario, clave) => {
     } else if (Usuario === 'ii' && clave === '123') {
         return { institucion: 'itr', level: 'admin' };
     } else {
-        return null;
+        return null; // Retorna null si las credenciales no coinciden
     }
 };
 
+// Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
-    const [Usuario, setUsuario] = useState('');
-    const [clave, setClave] = useState('123');
+    const [Usuario, setUsuario] = useState(''); // Estado para el nombre de usuario
+    const [clave, setClave] = useState('123'); // Estado para la contraseña
 
+    // Función para manejar el inicio de sesión
     const IniciarSesion = () => {
-        console.log('Ejecutando handle login')
-        const user = authenticateUser(Usuario, clave);
+        console.log('Ejecutando handle login');
+        const user = authenticateUser(Usuario, clave); // Autentica al usuario
         if (user) {
             console.log("Propiedad", JSON.stringify(user));
 
+            // Redirige al usuario según su nivel de acceso
             if (user.level === 'instructorcfp') {
                 navigation.navigate('InstructorcfpStack');
             } else if (user.level === 'admincfp') {
@@ -38,35 +42,35 @@ export default function LoginScreen({ navigation }) {
                 Alert.alert('Error', 'Institución no reconocida');
             }
         } else {
-            Alert.alert('Error', 'Credenciales incorrectas');
+            Alert.alert('Error', 'Credenciales incorrectas'); // Muestra una alerta si las credenciales son incorrectas
             console.log("Desde authenticate");
         }
     };
 
     return (
-        <BackgroundImage background="login">
+        <BackgroundImage background="login"> {/* Establece una imagen de fondo */}
             <View style={styles.container}>
                 <Image
-                    source={require('../../assets/myloanLogo.png')}
+                    source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
                     style={styles.logo}
                 />
                 <View style={styles.card}>
                     <Text style={styles.title}>Ingresa tu nombre de usuario</Text>
                     <Input
-                        placeHolder="Usuario"
+                        placeHolder="Usuario" // Campo de entrada para el nombre de usuario
                         valor={Usuario}
                         setTextChange={setUsuario}
                         contra={false}
                     />
                     <Text style={styles.title}>Ingresa tu contraseña</Text>
                     <Input
-                        placeHolder="Password"
+                        placeHolder="Password" // Campo de entrada para la contraseña
                         valor={clave}
                         setTextChange={setClave}
                         contra={true}
                     />
                     <Buttons
-                        textoBoton={'Iniciar sesión'}
+                        textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
                         accionBoton={IniciarSesion}
                         style={styles.Iniciar}
                         color="Amarillo"
@@ -79,22 +83,22 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1, // Ocupa todo el espacio disponible
+        justifyContent: 'center', // Centra el contenido verticalmente
+        alignItems: 'center', // Centra el contenido horizontalmente
     },
     title: {
         fontSize: 15,
         fontWeight: 'bold',
         marginBottom: 10,
         marginTop: 10,
-        color: '#000',
+        color: '#000', // Estilo del texto del título
     },
     logo: {
         width: 150,
         height: 150,
         resizeMode: 'contain',
-        marginBottom: 20,
+        marginBottom: 20, // Estilo del logo
     },
     card: {
         backgroundColor: '#fff',
@@ -108,9 +112,9 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         height: '35%',
-        justifyContent: 'center',
+        justifyContent: 'center', // Estilo de la tarjeta que contiene el formulario de inicio de sesión
     },
     Iniciar: {
-        marginTop: 20,
+        marginTop: 20, // Estilo del botón de inicio de sesión
     }
 });

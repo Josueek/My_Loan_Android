@@ -5,33 +5,34 @@ import { useNavigation } from '@react-navigation/native';
 import BackgroundImage from '../components/BackgroundImage';
 
 export default function SplashScreen() {
-    const [counter, setCounter] = useState(3);
-    const navigation = useNavigation();
+    const [counter, setCounter] = useState(3); // Estado para el contador, inicializado en 3 segundos
+    const navigation = useNavigation(); // Hook para manejar la navegación
 
     useEffect(() => {
+        // Efecto para decrementar el contador cada segundo
         const timer = setInterval(() => {
             setCounter(prevCounter => prevCounter - 1);
         }, 1000);
 
-        return () => clearInterval(timer);
+        return () => clearInterval(timer); // Limpia el intervalo cuando el componente se desmonta
     }, []);
 
     useEffect(() => {
         if (counter === 0) {
-            // Navegar a la pantalla de inicio de sesión después de que el temporizador llegue a cero
+            // Navega a la pantalla de inicio de sesión cuando el contador llega a cero
             navigation.navigate('Login');
         }
-    }, [counter]);
+    }, [counter]); // Efecto se ejecuta cada vez que cambia el valor del contador
 
     return (
-        <BackgroundImage background="login">
+        <BackgroundImage background="login"> {/* Componente de imagen de fondo */}
             <View style={styles.container}>
                 <Image
-                    source={require('../../assets/myloanLogo.png')}
+                    source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
                     style={styles.logo}
                 />
                 <Text style={styles.title}>
-                    Administra de la mejor manera
+                    Administra de la mejor manera {/* Texto de bienvenida */}
                 </Text>
             </View>
         </BackgroundImage>
@@ -40,18 +41,18 @@ export default function SplashScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1, // Ocupa todo el espacio disponible
+        justifyContent: 'center', // Centra el contenido verticalmente
+        alignItems: 'center', // Centra el contenido horizontalmente
     },
     logo: {
         width: 150,
         height: 150,
         resizeMode: 'contain',
-        marginBottom: 20,
+        marginBottom: 20, // Estilo del logo
     },
     title: {
         fontSize: 20,
-        textAlign: 'center',
+        textAlign: 'center', // Estilo del texto de bienvenida
     },
 });

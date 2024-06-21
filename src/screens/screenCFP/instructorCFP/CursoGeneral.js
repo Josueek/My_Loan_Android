@@ -6,10 +6,11 @@ import Input from '../../../components/Inputs/TextInput';
 
 
 const CursoGeneral = () => {
-    const [curso, setCurso] = useState('Curso de enca');
+    const [curso, setCurso] = useState('Curso de enca'); // Estado para el curso
+
     return (
         <View style={styles.container}>
-            {/*Usamos row y colum para posicionar los input en dos columnas*/}
+            {/* Usamos row y column para posicionar los inputs en dos columnas */}
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Nombre del curso:</Text>
@@ -17,7 +18,7 @@ const CursoGeneral = () => {
                         placeHolder="Nombre del curso"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                     />
                 </View>
@@ -30,7 +31,7 @@ const CursoGeneral = () => {
                         placeHolder="19/04/2024"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
@@ -41,7 +42,7 @@ const CursoGeneral = () => {
                         placeHolder="20/04/2024"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
@@ -55,7 +56,7 @@ const CursoGeneral = () => {
                         placeHolder="EC"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
@@ -66,12 +67,13 @@ const CursoGeneral = () => {
                         placeHolder="2"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
                 </View>
             </View>
+
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Duración del curso:</Text>
@@ -79,7 +81,7 @@ const CursoGeneral = () => {
                         placeHolder="48 Horas"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
@@ -90,7 +92,7 @@ const CursoGeneral = () => {
                         placeHolder="20"
                         valor={curso}
                         contra={false}
-                        editable={false}
+                        editable={false} // Campo no editable
                         setTextChange={setCurso}
                         style={styles.input}
                     />
@@ -105,9 +107,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 50,
-   
         paddingHorizontal: 5,
-        backgroundColor: '#fff',
         padding: 40,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -118,9 +118,9 @@ const styles = StyleSheet.create({
         height: '35%',
     },
     row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginVertical: 10,
+        flexDirection: 'row', // Organiza los elementos en una fila
+        justifyContent: 'space-between', // Espacio entre los elementos
+        marginVertical: 10, // Margen vertical entre las filas
     },
     column: {
         flex: 0,

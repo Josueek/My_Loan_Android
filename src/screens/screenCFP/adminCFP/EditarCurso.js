@@ -13,29 +13,30 @@ import InputNumer from '../../../components/Inputs/InputNumer';
 //Boton
 import Buttons from '../../../components/Buttons/Buttons';
 
-//Agregamos cursos desde esta pantalla
-export default function EdiarCurso() {
-    const [curso, setCurso] = useState('Curso de enca');
-    //Datos para llenar los combobox
+// Componente para editar cursos
+export default function EditarCurso() {
+    const [curso, setCurso] = useState('Curso de enca'); // Estado para el nombre del curso
+    // Datos para llenar los combobox
     const items = [
         { label: 'Option 1', value: '1' },
         { label: 'Option 2', value: '2' },
         { label: 'Option 3', value: '3' },
     ];
     //
-    const [text, setText] = useState('');
-    const [selectedValue, setSelectedValue] = useState('');
-    const [number, setNumber] = useState("");
-    //Navegacion, volver a la pestaña anterior
+    const [text, setText] = useState(''); // Estado para texto genérico
+    const [selectedValue, setSelectedValue] = useState(''); // Estado para el valor seleccionado en ComboBox
+    const [number, setNumber] = useState(''); // Estado para valores numéricos
+    // Navegación, volver a la pestaña anterior
     const navigation = useNavigation();
     const Volver = () => {
         navigation.navigate('AdmincfpTabNavigator');
     }
+
     return (
-        <BackgroundImage background="AdminCFP">
+        <BackgroundImage background="AdminCFP"> {/* Componente de fondo personalizado */}
             <View style={styles.container}>
                 <Image
-                    source={require('../../../../assets/myloanLogo.png')}
+                    source={require('../../../../assets/myloanLogo.png')} // Ruta del logo
                     style={styles.logo}
                 />
                 <View style={styles.card}>
@@ -144,13 +145,13 @@ export default function EdiarCurso() {
                             </View>
                         </View>
 
-                        <Text>Estado del curso:</Text>
+                        <Text>Observaciones del curso:</Text>
                         <InputMultiline
                             placeHolder="Ingresa algún comentario o observación"
-                            valor={curso}
+                            valor={text}
                             contra={false}
                             editable={true}
-                            setTextChange={setCurso}
+                            setTextChange={setText}
                             style={styles.inputM}
                             multiline={true}
                         />
@@ -160,36 +161,41 @@ export default function EdiarCurso() {
                     <View style={styles.column}>
                         <Buttons
                             color={"Amarillo"}
-                            textoBoton={'Editar'} />
+                            textoBoton={'Editar'}
+                        />
                     </View>
                     <View style={styles.column}>
                         <Buttons
                             textoBoton={'Volver'}
-                            color="Gris" 
-                            accionBoton={Volver}/>
+                            color="Gris"
+                            accionBoton={Volver}
+                        />
                     </View>
                 </View>
-
             </View>
         </BackgroundImage>
     );
 }
 
+// Estilos del componente
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-    }, title: {
+    },
+    title: {
         fontSize: 20,
         textAlign: 'center',
-    }, logo: {
+    },
+    logo: {
         width: 125,
         height: 80,
         marginTop: 30,
         marginLeft: 20,
         marginBottom: 20,
         justifyContent: 'space-between',
-    }, card: {
+    },
+    card: {
         paddingHorizontal: 10,
         backgroundColor: '#fff',
         padding: 1,
@@ -203,7 +209,8 @@ const styles = StyleSheet.create({
         height: '65%',
         marginBottom: 10,
         marginLeft: 0,
-    }, row: {
+    },
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginVertical: 10,
@@ -214,5 +221,5 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 10,
         marginTop: 10, // Ajusta este valor para aumentar el espacio entre las columnas
-    }
+    },
 });
