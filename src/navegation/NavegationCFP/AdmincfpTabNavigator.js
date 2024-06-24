@@ -32,7 +32,7 @@ const AdmincfpTabNavigator = () => {
                 tabBarLabelStyle: { fontWeight: 'bold' },
             })}
         >
-            {/* Aca se definen los menús */}
+          
             <Tab.Screen
                 name="Prestamo"
                 component={PrestamoScreen}

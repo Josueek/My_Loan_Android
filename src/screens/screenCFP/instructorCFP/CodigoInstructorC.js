@@ -9,16 +9,16 @@ export default function LoginScreen({ navigation }) { // Componente principal de
         // Función para navegar a la siguiente pantalla
         navigation.replace('InstructorTabNavigator'); // Reemplaza la pantalla actual con la pantalla 'InstructorTabNavigator'
     }
-
+    /* Establece una imagen de fondo */ 
     return (
-        <BackgroundImage background="InstructorCFPC"> {/* Establece una imagen de fondo */}
+        <BackgroundImage background="InstructorCFPC">
             <View style={styles.container}>
-                <Text style={styles.title}>El código se envió a tu correo electrónico</Text> {/* Texto de información */}
+                <Text style={styles.title}>El código se envió a tu correo electrónico</Text>
                 <Image
                     source={require('../../../img/NotificacionCelular.png')} // Muestra una imagen de notificación
                     style={styles.logoCelular}
                 />
-                <Text style={styles.Texto}>Si no tienes acceso al código comunicate con tus superiores</Text> {/* Texto adicional */}
+                <Text style={styles.Texto}>Si no tienes acceso al código comunicate con tus superiores</Text>
                 <Input
                     placeHolder={'Ingresa el código'} // Campo de entrada para el código
                     contra={false}
@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) { // Componente principal de
                 <Button
                     textoBoton={'Continuar'} // Botón para continuar
                     color={"Amarillo"}
-                    accionBoton={Siguiente} /> {/* Llama a la función Siguiente al presionar el botón */}
+                    accionBoton={Siguiente} />
             </View>
         </BackgroundImage>
     );
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         color: '#fff', // Color del texto del título
         textAlign: 'center',
         width: 250,
-    }, 
+    },
     logoCelular: {
         position: 'relative',
         bottom: 0,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         height: 150,
         marginTop: 50,
         marginVertical: 60,
-    }, 
+    },
     Texto: {
         width: 250,
         marginVertical: 30,

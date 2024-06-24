@@ -48,7 +48,7 @@ export default function LoginScreen({ navigation }) {
     };
 
     return (
-        <BackgroundImage background="login"> {/* Establece una imagen de fondo */}
+        <BackgroundImage background="login"> 
             <View style={styles.container}>
                 <Image
                     source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación

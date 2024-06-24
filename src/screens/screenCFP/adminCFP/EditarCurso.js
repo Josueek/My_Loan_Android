@@ -31,9 +31,9 @@ export default function EditarCurso() {
     const Volver = () => {
         navigation.navigate('AdmincfpTabNavigator');
     }
-
+    /* Componente de fondo personalizado */ 
     return (
-        <BackgroundImage background="AdminCFP"> {/* Componente de fondo personalizado */}
+        <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
                 <Image
                     source={require('../../../../assets/myloanLogo.png')} // Ruta del logo

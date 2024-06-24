@@ -32,8 +32,11 @@ const PrestamoScreen = () => {
                 <Image
                     source={require('../../../../assets/myloanLogo.png')}
                     style={styles.logo} />
-                {/*Recreacion de la tarjeta*/}
-                <Text style={styles.title}>Prestámos realizados por el Instituto Técnico Ricaldone</Text>
+
+                <Text style={styles.title}
+                //*Recreacion de la tarjeta*/
+                >Prestámos realizados por el Instituto Técnico Ricaldone</Text>
+                
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={Data}

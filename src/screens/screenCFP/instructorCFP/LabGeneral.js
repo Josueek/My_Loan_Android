@@ -10,9 +10,11 @@ import InputShort from '../../../components/Inputs/InputShort';
 const LabGeneral = () => {
     const [Lab, setLab] = useState('Curso de enca');
     //Pantalls de intructores
+
+    /*Usamos row y colum para posicionar los input en dos columnas*/
     return (
         <View style={styles.container}>
-            {/*Usamos row y colum para posicionar los input en dos columnas*/}
+           
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Nombre del laboratorio:</Text>

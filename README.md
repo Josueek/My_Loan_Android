@@ -1,6 +1,11 @@
 "# My_Loan_Android" 
 
-Librerias utilizadas npx expo install @react-navigation/native @react-navigation/stack @react-navigation/drawer npx expo install @react-native-async-storage/async-storage npm install react-native-screens react-native-safe-area-context npm install @react-navigation/native npm install @react-navigation/stack
+Librerias utilizadas
+ npx expo install @react-navigation/native @react-navigation/stack @react-navigation/drawer
+npx expo install @react-native-async-storage/async-storage 
+npm install react-native-screens react-native-safe-area-context 
+npm install @react-navigation/native 
+npm install @react-navigation/stack
 npm install @react-navigation/bottom-tabs
 npm install @react-native-picker/picker
 

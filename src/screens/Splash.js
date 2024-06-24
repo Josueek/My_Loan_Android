@@ -25,14 +25,14 @@ export default function SplashScreen() {
     }, [counter]); // Efecto se ejecuta cada vez que cambia el valor del contador
 
     return (
-        <BackgroundImage background="login"> {/* Componente de imagen de fondo */}
+        <BackgroundImage background="login"> 
             <View style={styles.container}>
                 <Image
                     source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
                     style={styles.logo}
                 />
                 <Text style={styles.title}>
-                    Administra de la mejor manera {/* Texto de bienvenida */}
+                    Administra de la mejor manera  
                 </Text>
             </View>
         </BackgroundImage>

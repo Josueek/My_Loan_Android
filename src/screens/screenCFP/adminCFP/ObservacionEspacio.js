@@ -45,7 +45,7 @@ const ObservacionEspacio = () => {
                         editable={true}
                         setTextChange={setText} />
                 </View>
-                {/* sección de los botones */}
+              
                 <View style={styles.row}>
                     <View style={styles.column}>
                         <Buttons color={"Amarillo"} textoBoton={'Agregar'} />

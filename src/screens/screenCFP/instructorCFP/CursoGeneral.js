@@ -7,10 +7,10 @@ import Input from '../../../components/Inputs/TextInput';
 
 const CursoGeneral = () => {
     const [curso, setCurso] = useState('Curso de enca'); // Estado para el curso
-
+    /* Usamos row y column para posicionar los inputs en dos columnas */ 
     return (
         <View style={styles.container}>
-            {/* Usamos row y column para posicionar los inputs en dos columnas */}
+
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Nombre del curso:</Text>
