@@ -21,4 +21,4 @@ Nombrado de Variables: Sigue la convención de camelCase para nombres de variabl
 
 Nombrado de Clases y Métodos: Sigue la convención UpperCamelCase para nombres de clases y lowerCamelCase para nombres de métodos (por ejemplo, LoginActivity, obtenerUsuarios()).
 
-Comentarios: Documenta tu código utilizando comentarios claros y concisos.
+Comentarios: Documenta tu código utilizando comentarios claros y concisos."# NetSport-Android" 
