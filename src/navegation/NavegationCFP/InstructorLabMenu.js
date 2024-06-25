@@ -8,14 +8,20 @@ import LabDetalle from '../../screens/screenCFP/instructorCFP/LabDetalle';
 import { TabControl } from 'rn-segmented-tab-controls';
 //Componente para definir el fondo de pantalla 
 import BackgroundImage from '../../components/BackgroundImage';
+//Componentes
+import Buttons from '../../components/Buttons/Buttons';
+
 /*En esta pantalla se muestra un menu tipo tab para cambiar de pantalla*/
+
 const InstructorLabMenu = () => {
     //Definimos las opciones de la pestaña
     const values = [
         { key: "General", renderItem: LabGeneral },
         { key: "Detalle", renderItem: LabDetalle },
     ];
-
+    const Volver = () => {
+        navigation.navigate('LabGeneral');
+    }
     const navigation = useNavigation();
 
     return (
@@ -29,6 +35,13 @@ const InstructorLabMenu = () => {
                     activeTabStyle={{ backgroundColor: '#000' }}
                     inactiveTabStyle={{ backgroundColor: '#000' }}
                     font />
+                <View style={styles.buton}>
+                    <Buttons
+                        color={"Gris"}
+                        textoBoton={"Volver"} 
+                        accionBoton={Volver}/>
+                </View>
+
             </View>
         </BackgroundImage>
     );
@@ -48,11 +61,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     tabControl: {
-        marginTop: 20, // Ajusta este valor según sea necesario para subir el TabControl
+        marginTop: 30, // Ajusta este valor según sea necesario para subir el TabControl
         backgroundColor: '#F9F9F9',
         width: '200',
         activeTabStyle: '#000',
-    },
+        height: '65%',
+    }, buton: {
+        marginTop: 60,
+    }
 });
 
 export default InstructorLabMenu;

@@ -7,7 +7,7 @@ import Input from '../../../components/Inputs/TextInput';
 
 const CursoGeneral = () => {
     const [curso, setCurso] = useState('Curso de enca'); // Estado para el curso
-    /* Usamos row y column para posicionar los inputs en dos columnas */ 
+    /* Usamos row y column para posicionar los inputs en dos columnas */
     return (
         <View style={styles.container}>
 
@@ -98,6 +98,31 @@ const CursoGeneral = () => {
                     />
                 </View>
             </View>
+            <View style={styles.row}>
+                <View style={styles.column}>
+                    <Text>Estado del curso:</Text>
+                    <InputShort
+                        placeHolder="Activo"
+                        valor={curso}
+                        contra={false}
+                        editable={false} // Campo no editable
+                        setTextChange={setCurso}
+                        style={styles.input}
+                    />
+                </View>
+                <View style={styles.column}>
+                    <Text>Código del curso:</Text>
+                    <InputShort
+                        placeHolder="ASAS51"
+                        valor={curso}
+                        contra={false}
+                        editable={false} // Campo no editable
+                        setTextChange={setCurso}
+                        style={styles.input}
+                    />
+                </View>
+
+            </View>
         </View>
     );
 }
@@ -106,7 +131,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: 50,
+        paddingTop: 25,
         paddingHorizontal: 5,
         padding: 40,
         shadowColor: '#000',

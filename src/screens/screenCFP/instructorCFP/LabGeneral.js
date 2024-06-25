@@ -14,7 +14,7 @@ const LabGeneral = () => {
     /*Usamos row y colum para posicionar los input en dos columnas*/
     return (
         <View style={styles.container}>
-           
+
             <View style={styles.row}>
                 <View style={styles.column}>
                     <Text>Nombre del laboratorio:</Text>
@@ -89,7 +89,17 @@ const LabGeneral = () => {
                         style={styles.input}
                     />
                 </View>
-                
+                <View style={styles.column}>
+                    <Text>Estado del espacio:</Text>
+                    <InputShort
+                        placeHolder="Ocupado"
+                        valor={Lab}
+                        contra={false}
+                        editable={false}
+                        setTextChange={setLab}
+                        style={styles.input}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -101,7 +111,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 50,
-
         paddingHorizontal: 5,
         backgroundColor: '#fff',
         padding: 40,

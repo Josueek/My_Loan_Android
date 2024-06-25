@@ -2,7 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CodigoInstructorCFP from '../../screens/screenCFP/instructorCFP/CodigoInstructorC';
 import InstructorTabNavigator from '../NavegationCFP/InstructorTabNavigator';
-
+import LabDetalles from '../NavegationCFP/InstructorLabMenu';
+//Pantalla de Cursos
+import CursoDetalles from '../NavegationCFP/InstructorCursoMenu';
 const Stack = createStackNavigator(); // Crea una pila de navegación
 
 const InstructorcfpStack = () => {
@@ -17,6 +19,16 @@ const InstructorcfpStack = () => {
             <Stack.Screen
                 name="InstructorTabNavigator"
                 component={InstructorTabNavigator}
+                options={{ headerShown: false }} // Oculta el encabezado para esta pantalla
+            />
+            <Stack.Screen
+                name="CursoDetalles"
+                component={CursoDetalles}
+                options={{ headerShown: false }} // Oculta el encabezado para esta pantalla
+            />
+            <Stack.Screen
+                name="LabDetalles"
+                component={LabDetalles}
                 options={{ headerShown: false }} // Oculta el encabezado para esta pantalla
             />
         </Stack.Navigator>

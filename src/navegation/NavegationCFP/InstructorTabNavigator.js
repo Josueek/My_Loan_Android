@@ -1,8 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import InstructorCursoMenu from '../../navegation/NavegationCFP/InstructorCursoMenu';
-import LabGeneral from '../../navegation/NavegationCFP/InstructorLabMenu';
+ 
+import InstructorCurso from '../../screens/screenCFP/instructorCFP/CursoScreen';
+import LabGeneral from '../../screens/screenCFP/instructorCFP/LabScreen';
 
 const Tab = createBottomTabNavigator(); // Crea un navegador de pestañas
 
@@ -15,9 +16,9 @@ const InstructorTopTabNavigator = () => {
                     let iconName;
 
                     // Define los íconos según el nombre de la ruta
-                    if (route.name === 'Curso del instructor') {
+                    if (route.name === 'InstructorCurso') {
                         iconName = 'book-outline';
-                    } else if (route.name === 'Laboratorio asignado') {
+                    } else if (route.name === 'LabGeneral') {
                         iconName = 'flask-outline';
                     }
 
@@ -31,15 +32,16 @@ const InstructorTopTabNavigator = () => {
             })}
         >
             <Tab.Screen
-                name="Curso del instructor"
-                component={InstructorCursoMenu}
+                name="InstructorCurso"
+                component={InstructorCurso}
                 options={{ tabBarLabel: 'Curso' }} // Nombre de la pestaña (no se mostrará, pero es útil para referencia)
             />
             <Tab.Screen
-                name="Laboratorio asignado"
+                name="LabGeneral"
                 component={LabGeneral}
                 options={{ tabBarLabel: 'Lab' }} // Nombre de la pestaña (no se mostrará, pero es útil para referencia)
             />
+             
         </Tab.Navigator>
     );
 }
