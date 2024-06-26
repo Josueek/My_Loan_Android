@@ -14,8 +14,9 @@ const authenticateUser = (Usuario, clave) => {
         return { institucion: 'CFP', level: 'instructorcfp' };
     } else if (Usuario === 'ee' && clave === '123') {
         return { institucion: 'CFP', level: 'admincfp' };
+
     } else if (Usuario === 'ii' && clave === '123') {
-        return { institucion: 'itr', level: 'admin' };
+        return { institucion: 'itr', level: 'instructoritr' };
     } else {
         return null; // Retorna null si las credenciales no coinciden
     }
@@ -38,7 +39,10 @@ export default function LoginScreen({ navigation }) {
                 navigation.navigate('InstructorcfpStack');
             } else if (user.level === 'admincfp') {
                 navigation.navigate('AdmincfpStack');
-            } else {
+            } else if (user.level === 'instructoritr') {
+                navigation.navigate('InstructoritrStack');
+            }
+            else {
                 Alert.alert('Error', 'Institución no reconocida');
             }
         } else {
@@ -48,7 +52,7 @@ export default function LoginScreen({ navigation }) {
     };
 
     return (
-        <BackgroundImage background="login"> 
+        <BackgroundImage background="login">
             <View style={styles.container}>
                 <Image
                     source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación

@@ -3,9 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '../screens/Splash';
 //Importamos las pantallas a presentar, navegabilidad
 import LoginScreen from '../screens/LoginScreen';
+//Centro De formacion Profesional
 import InstructorcfpStack from './NavegationCFP/InstructorcfpStack';
 import AdmincfpStack from './NavegationCFP/AdmincfpStack';
-
+//Instituto Tecnico Ricaldone
+import InstructoritrStack from './NavegationITR/InstructoritrStack';
 const Stack = createStackNavigator();
 
 const NavStack = () => {
@@ -26,11 +28,16 @@ const NavStack = () => {
                 component={InstructorcfpStack}
                 options={{ headerShown: false }}
             />
-             <Stack.Screen
+            <Stack.Screen
                 name="AdmincfpStack"
                 component={AdmincfpStack}
                 options={{ headerShown: false }}
             />
+            <Stack.Screen
+                name="InstructoritrStack"
+                component={InstructoritrStack}
+                options={{ headerShown: false }} />
+
         </Stack.Navigator>
     );
 }
