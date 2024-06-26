@@ -14,11 +14,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const CursoScreen = () => {
     const navigation = useNavigation();
 
-    //Navegar hacia la pantalla de agregar curso
+    //Funciona para navegar hacia la pantalla de agregar curso
     const AgregarCurso = () => {
         navigation.navigate('CrearCursosScreen');
     }
-    //Accion del boton
+    //Funciona para la accion del boton
     const EliminarCurso = () => {
         //Cuando se preciona el boton mandamos una alerta
         Alert.alert(
@@ -35,7 +35,7 @@ const CursoScreen = () => {
         );
     }
 
-    // Estilo de la carta renderizada
+    // Funcions para ver el estilo de la carta renderizada
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
