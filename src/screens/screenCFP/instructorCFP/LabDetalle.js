@@ -22,7 +22,7 @@ const LabGeneral = () => {
     );
 }
 
-
+    //Funciona para ver el estilo que se va a ver en la pantalla
 const styles = StyleSheet.create({
     container: {
         flex: 1,
