@@ -6,14 +6,14 @@ import BackgroundImage from '../../../components/BackgroundImage';
 // Datos que se muestran en las tarjetas
 import Data from '../../../data/dataCFP/CursosCFP';
 
-// Filtrar los datos para que solo incluyan los registros con el ID específico
+// funciona para filtrar los datos para que solo incluyan los registros con el ID específico
 const filteredData = Data.filter(item => item.id === '1' || item.id === '4'); // Cambia '1' y '2' por los IDs que necesitas
 
 // Pantalla que muestra todos los cursos 
 const CursoScreen = () => {
     const navigation = useNavigation();
 
-    // Estilo de la carta renderizada
+    // Funciona para ver el estilo de la carta renderizada
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity
