@@ -11,7 +11,7 @@ import Data from '../../../data/dataCFP/EspaciosITR';
 const EspaciosITR = () => {
     // Navegabilidad
     const navigation = useNavigation();
-    // Accion del boton
+    // funciona para la accion del boton
     const Observacion = () => {
         navigation.navigate('ObservacionEspacio');
     };
