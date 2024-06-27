@@ -14,9 +14,10 @@ const authenticateUser = (Usuario, clave) => {
         return { institucion: 'CFP', level: 'instructorcfp' };
     } else if (Usuario === 'ee' && clave === '123') {
         return { institucion: 'CFP', level: 'admincfp' };
-
     } else if (Usuario === 'ii' && clave === '123') {
         return { institucion: 'itr', level: 'instructoritr' };
+    } else if (Usuario === 'oo' && clave === '123') {
+        return { institucion: 'itr', level: 'adminitr' };
     } else {
         return null; // Retorna null si las credenciales no coinciden
     }
