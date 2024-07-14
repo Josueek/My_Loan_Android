@@ -12,7 +12,9 @@ const BackgroundImage = ({ children, background }) => {
         LabInstructor: require('../../assets/FondosScreen/LabGeneralScreen.png'),
         /* Fondos para adminstradores CFP */
         AdminCFP: require('../../assets/FondosScreen/adminSplash.png'),
-        EspaciosITR: require('../../assets/FondosScreen/EspaciosScreen.png')
+        EspaciosITR: require('../../assets/FondosScreen/EspaciosScreen.png'),
+        //Fondos para instructores ITR
+        InstructoritrScreen: require('../../assets/FondosScreen/InstructoritrScreen.png'),
     };
 
     return (

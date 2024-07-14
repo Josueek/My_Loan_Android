@@ -11,11 +11,14 @@ const EspaciosAsignados = () => {
     const navigation = useNavigation();
     // Accion del boton
     const Observacion = () => {
-        navigation.navigate('LabDetalles');
+        navigation.navigate('DatosEspacios');
     };
 
     // Filtrar los datos para que solo incluyan los registros con el ID específico
-    const filteredData = Data.filter(item => item.id === '2' || item.id === '4'); // Cambia '1' y '4' por los IDs que necesitas
+    const filteredData = Data.filter(item => item.id === '2' || item.id === '4');  
+
+    // Filtrar el instructor específico
+    const instructorData = Data.find(item => item.id === '2'); // Cambia '2' por el ID que necesitas
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={Observacion}>
@@ -39,9 +42,20 @@ const EspaciosAsignados = () => {
     );
 
     return (
-        <BackgroundImage background="EspaciosITR">
+        <BackgroundImage background="InstructoritrScreen">
             <View style={styles.container}>
-                <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
+                <View style={styles.Logos}>
+                    <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
+                    <Image source={require('../../../../assets/LogoRicaldone.png')} style={styles.logoRical} />
+                </View>
+
+                {/* Mostrar el nombre del instructor específico */}
+                {instructorData && (
+                    <Text style={styles.instructorLog}>
+                        Instructor: {instructorData.Instructor}
+                    </Text>
+                )}
+
                 <Text style={styles.title}>Listado de espacios asignados</Text>
                 <FlatList
                     data={filteredData} // Pasa los datos filtrados aquí
@@ -128,7 +142,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 12,
         color: '#7c7c7c',
-        marginTop: 10,
     },
     logo: {
         width: 125,
@@ -140,8 +153,24 @@ const styles = StyleSheet.create({
         fontSize: 23,
         fontWeight: 'bold',
         padding: 20,
-         
+    },
+    logoRical: {
+        width: 100,
+        height: 100,
+        marginTop: 50,
+        marginBottom: 30,
+    },
+    Logos: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+    instructorLog: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginVertical: 10,
     },
 });
 
