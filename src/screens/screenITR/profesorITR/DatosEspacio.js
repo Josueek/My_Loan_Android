@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 //Componente para establecer un fondo diferente en cada pantalla
 import BackgroundImage from '../../../components/BackgroundImage';
 //Importamos los componentes
@@ -11,7 +12,16 @@ import Buttons from '../../../components/Buttons/Buttons';
 
 const DatosEspacio = () => {
     const [Espacio, setEspacio] = useState('Curso de enca');
-
+    // Navegabilidad
+    const navigation = useNavigation();
+    // Accion del boton
+    const VerObservacion = () => {
+        navigation.navigate('ObservHechas');
+    };
+    //Volver a la pantalla anterior
+    const Volver = () => {
+        navigation.navigate('EspaciosAsignados')
+    }
     return (
         <BackgroundImage background="InstructoritrScreen">
             <View style={styles.container}>
@@ -97,10 +107,14 @@ const DatosEspacio = () => {
                 </View>
                 <View style={styles.row}>
                     <View style={styles.column}>
-                        <Buttons color={'Amarillo'} textoBoton={"Observaciones"} />
+                        <Buttons color={'Amarillo'}
+                            textoBoton={"Observaciones"}
+                            accionBoton={VerObservacion} />
                     </View>
                     <View style={styles.column}>
-                        <Buttons color={'Gris'} textoBoton={"Volver"} />
+                        <Buttons color={'Gris'}
+                            textoBoton={"Volver"}
+                            accionBoton={Volver} />
                     </View>
                 </View>
             </View>

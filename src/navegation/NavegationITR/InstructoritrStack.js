@@ -6,7 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import EspaciosAsignados from '../../screens/screenITR/profesorITR/EspaciosAsignados';
 //Pantalla para ver los datos del espacio
 import DatosEspacios from '../../screens/screenITR/profesorITR/DatosEspacio'
-
+//Pantalla para ver las observaciones realizadas
+import ObservHechas from '../../screens/screenITR/profesorITR/ObservHechas';
 
 // Creamos una instancia del Stack Navigator.
 const Stack = createStackNavigator();
@@ -24,6 +25,11 @@ const InstructoritrStack = () => {
             <Stack.Screen
                 name="DatosEspacios"
                 component={DatosEspacios}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ObservHechas"
+                component={ObservHechas}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
