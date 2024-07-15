@@ -10,6 +10,7 @@ import InputMultiline from '../../../components/Inputs/InputMultiline';
 import InputShort from '../../../components/Inputs/InputShort';
 import ComboBox from '../../../components/Inputs/ComboBox';
 import InputNumer from '../../../components/Inputs/InputNumer';
+import DatePickerInput from '../../../components/Inputs/DatePicker';
 //Boton
 import Buttons from '../../../components/Buttons/Buttons';
 
@@ -26,6 +27,9 @@ export default function CrearCursoScreen() {
     const [text, setText] = useState('');
     const [selectedValue, setSelectedValue] = useState('');
     const [number, setNumber] = useState("");
+    const [fechaInicio, setFechaInicio] = useState(new Date());
+const [fechaFin, setFechaFin] = useState(new Date());
+
     //Navegacion, volver a la pestaña anterior
     const navigation = useNavigation();
     const Volver = () => {
@@ -66,25 +70,25 @@ export default function CrearCursoScreen() {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Fecha de inicio:</Text>
-                                <InputShort
-                                    placeHolder="19/04/2024"
-                                    valor={curso}
-                                    contra={false}
+                                <DatePickerInput
+                                    placeHolder="Selecciona la fecha"
+                                    valor={fechaInicio}
+                                    setTextChange={setFechaInicio}
                                     editable={true}
-                                    setTextChange={setCurso}
                                     style={styles.input}
                                 />
+
                             </View>
                             <View style={styles.column}>
-                                <Text>Fecha de finalización:</Text>
-                                <InputShort
-                                    placeHolder="20/04/2024"
-                                    valor={curso}
-                                    contra={false}
+                            <Text>Fecha de finalización:</Text>
+                                <DatePickerInput
+                                    placeHolder="Selecciona la fecha"
+                                    valor={fechaInicio}
+                                    setTextChange={setFechaFin}
                                     editable={true}
-                                    setTextChange={setCurso}
                                     style={styles.input}
                                 />
+
                             </View>
                         </View>
 
@@ -165,8 +169,8 @@ export default function CrearCursoScreen() {
                     <View style={styles.column}>
                         <Buttons
                             textoBoton={'Volver'}
-                            color="Gris" 
-                            accionBoton={Volver}/>
+                            color="Gris"
+                            accionBoton={Volver} />
                     </View>
                 </View>
 
