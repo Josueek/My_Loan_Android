@@ -1,17 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 // Componente para el fondo de pantalla
 import BackgroundImage from '../../../components/BackgroundImage';
+import Buttons from '../../../components/Buttons/Buttons';
 // Datos que se muestran en las tarjetas
 import Data from '../../../data/dataCFP/CursosCFP';
 
+
 // funciona para filtrar los datos para que solo incluyan los registros con el ID específico
-const filteredData = Data.filter(item => item.id === '1' || item.id === '4'); // Cambia '1' y '2' por los IDs que necesitas
+const filteredData = Data.filter(item => item.id === '1' || item.id === '4' || item.id === '2'); // Cambia '1' y '2' por los IDs que necesitas
+
 
 // Pantalla que muestra todos los cursos 
 const CursoScreen = () => {
     const navigation = useNavigation();
+
+    //Cerrar sesion
+    const CerrarSesion = () => {
+        navigation.navigate('Login');
+    };
 
     // Funciona para ver el estilo de la carta renderizada
     const renderItem = ({ item }) => {
@@ -35,12 +43,13 @@ const CursoScreen = () => {
     };
 
     return (
-        <BackgroundImage background="AdminCFP">
+        <BackgroundImage background="AdminCFP" >
             <View style={styles.container}>
                 <Image
                     source={require('../../../../assets/myloanLogo.png')}
                     style={styles.logo} />
                 <Text style={styles.title}>Listado de cursos asignados</Text>
+
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={filteredData} // Usar los datos filtrados
@@ -50,8 +59,17 @@ const CursoScreen = () => {
                         contentContainerStyle={styles.flatListContent}
                     />
                 </View>
+                <View style={styles.Cerrar}>
+                    <Buttons
+                        textoBoton={'Cerrar sesión'} // Botón para iniciar sesión
+                        accionBoton={CerrarSesion}
+                        style={styles.Iniciar}
+                        color="Rojo" />
+                </View>
+
+
             </View>
-        </BackgroundImage>
+        </BackgroundImage >
     );
 }
 
@@ -63,7 +81,7 @@ const styles = StyleSheet.create({
     },
     flatListContainer: {
         padding: 10,
-        height: '75%',
+        height: '65%',
     },
     cardContainer: {
         backgroundColor: '#fff',
@@ -139,6 +157,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 3,
         paddingLeft: 5,
+        alignContent: 'center',
+    }, Cerrar: {
+
         alignContent: 'center',
     }
 });

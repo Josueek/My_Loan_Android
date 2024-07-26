@@ -5,6 +5,7 @@ export default function Buttons({ textoBoton, accionBoton, color }) {
     const Colores = {
         Amarillo: '#FCBE2D',
         Gris: '#C4C4C4',
+        Rojo: '#FD5454',
     };
 
     // Si el color proporcionado coincide con una clave del objeto Colores, usamos ese color

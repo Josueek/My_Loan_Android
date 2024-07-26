@@ -25,7 +25,7 @@ const authenticateUser = (Usuario, clave) => {
 
 // Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
-    const [Usuario, setUsuario] = useState(''); // Estado para el nombre de usuario
+    const [Usuario, setUsuario] = useState('ii'); // Estado para el nombre de usuario
     const [clave, setClave] = useState('123'); // Estado para la contraseña
 
     // Función para manejar el inicio de sesión

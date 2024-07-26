@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react
 import { useNavigation } from '@react-navigation/native';
 // Componente para definir el fondo
 import BackgroundImage from '../../../components/BackgroundImage';
+import Buttons from '../../../components/Buttons/Buttons';
 // datos para crear las card
 import Data from '../../../data/dataCFP/EspaciosITR';
 
@@ -14,8 +15,13 @@ const EspaciosAsignados = () => {
         navigation.navigate('DatosEspacios');
     };
 
+    //Cerrar sesion
+    const CerrarSession = () => {
+        navigation.navigate('Login');
+    };
+
     // Filtrar los datos para que solo incluyan los registros con el ID específico
-    const filteredData = Data.filter(item => item.id === '2' || item.id === '4');  
+    const filteredData = Data.filter(item => item.id === '2' || item.id === '4' || item.id === '1' || item.id === '3');
 
     // Filtrar el instructor específico
     const instructorData = Data.find(item => item.id === '2'); // Cambia '2' por el ID que necesitas
@@ -58,11 +64,19 @@ const EspaciosAsignados = () => {
 
                 <Text style={styles.title}>Listado de espacios asignados</Text>
                 <FlatList
+                    style={styles.lista}
                     data={filteredData} // Pasa los datos filtrados aquí
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.list}
                 />
+                <View style={styles.Cerrar}>
+                    <Buttons
+                        color={'Rojo'}
+                        textoBoton={"Cerrar sesión"}
+                        accionBoton={CerrarSession} // Asegúrate de pasar la función onPress
+                    />
+                </View>
             </View>
         </BackgroundImage>
     );
@@ -73,6 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30,
         alignItems: 'center',
+        justifyContent: 'space-between', // Asegura que los elementos estén distribuidos
     },
     list: {
         alignItems: 'center',
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         padding: 20,
-        marginBottom: 50,
+        marginBottom: 20,
         flex: 1,
     },
     tipoEspacio: {
@@ -172,6 +187,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginVertical: 10,
     },
+    lista: {
+        marginBottom: 40,
+    },
+    Cerrar: {
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 40,
+    }
 });
 
 export default EspaciosAsignados;
