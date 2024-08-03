@@ -6,49 +6,41 @@ import BackgroundImage from '../components/BackgroundImage';
 import Input from '../components/Inputs/TextInput';
 //Componente Button
 import Buttons from '../components/Buttons/Buttons';
+//Plantilla para la hacer las peticiones
+import fetchData from '../utils/fetchData';
 
-// Función para autenticar al usuario
-const authenticateUser = (Usuario, clave) => {
-    // Verifica las credenciales y retorna un objeto con información del usuario si coinciden
-    if (Usuario === 'aa' && clave === '123') {
-        return { institucion: 'CFP', level: 'instructorcfp' };
-    } else if (Usuario === 'ee' && clave === '123') {
-        return { institucion: 'CFP', level: 'admincfp' };
-    } else if (Usuario === 'ii' && clave === '123') {
-        return { institucion: 'itr', level: 'instructoritr' };
-    } else if (Usuario === 'oo' && clave === '123') {
-        return { institucion: 'itr', level: 'adminitr' };
-    } else {
-        return null; // Retorna null si las credenciales no coinciden
-    }
-};
 
 // Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
-    const [Usuario, setUsuario] = useState('ii'); // Estado para el nombre de usuario
-    const [clave, setClave] = useState('123'); // Estado para la contraseña
+    const [Correo, setCorreo] = useState(''); // Estado para el nombre de usuario
+    const [clave, setClave] = useState(''); // Estado para la contraseña
+
+    const Fast = () => {
+        navigation.navigate('AdminITRStack');
+    }
+
 
     // Función para manejar el inicio de sesión
-    const IniciarSesion = () => {
-        console.log('Ejecutando handle login');
-        const user = authenticateUser(Usuario, clave); // Autentica al usuario
-        if (user) {
-            console.log("Propiedad", JSON.stringify(user));
+    const handleLogin = async () => {
+        const form = new FormData();
+        //Mandamos los parametros de los datos de correo y clave
+        form.append('correo_electronico', Correo);
+        form.append('contrasena', clave);
 
-            // Redirige al usuario según su nivel de acceso
-            if (user.level === 'instructorcfp') {
-                navigation.navigate('InstructorcfpStack');
-            } else if (user.level === 'admincfp') {
-                navigation.navigate('AdmincfpStack');
-            } else if (user.level === 'instructoritr') {
+        //Parametros de la API
+        const response = await fetchData('login_services', 'login', form);
+        //Condicional si los parametros son correctos
+        if (response.status === 1) {
+            Alert.alert('Sesion iniciada correctamente'.response.message);
+            //Condicion para los diferentes niveles
+            if (response.institucion === 1) {
+                Alert.alert('Sesion iniciada Ricaldone'.response.message);
                 navigation.navigate('InstructoritrStack');
-            }
-            else {
-                Alert.alert('Error', 'Institución no reconocida');
+            } else {
+                Alert.alert('No se encontro una sesion'.response.message);
             }
         } else {
-            Alert.alert('Error', 'Credenciales incorrectas'); // Muestra una alerta si las credenciales son incorrectas
-            console.log("Desde authenticate");
+            Alert.alert('Inicio de sesión fallido', response.error || 'Unknown error');
         }
     };
 
@@ -60,23 +52,23 @@ export default function LoginScreen({ navigation }) {
                     style={styles.logo}
                 />
                 <View style={styles.card}>
-                    <Text style={styles.title}>Ingresa tu nombre de usuario</Text>
+                    <Text style={styles.title}>Ingresa tu correo electrónico</Text>
                     <Input
-                        placeHolder="Usuario" // Campo de entrada para el nombre de usuario
-                        valor={Usuario}
-                        setTextChange={setUsuario}
+                        placeHolder="Correo electrónico" // Campo de entrada para el nombre de usuario
+                        valor={Correo}
+                        setTextChange={setCorreo}
                         contra={false}
                     />
                     <Text style={styles.title}>Ingresa tu contraseña</Text>
                     <Input
-                        placeHolder="Password" // Campo de entrada para la contraseña
+                        placeHolder="Contraseña" // Campo de entrada para la contraseña
                         valor={clave}
                         setTextChange={setClave}
                         contra={true}
                     />
                     <Buttons
                         textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
-                        accionBoton={IniciarSesion}
+                        accionBoton={Fast}
                         style={styles.Iniciar}
                         color="Amarillo"
                     />

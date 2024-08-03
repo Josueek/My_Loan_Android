@@ -8,6 +8,9 @@ import InstructorcfpStack from './NavegationCFP/InstructorcfpStack';
 import AdmincfpStack from './NavegationCFP/AdmincfpStack';
 //Instituto Tecnico Ricaldone
 import InstructoritrStack from './NavegationITR/InstructoritrStack';
+//TabNavigacion de instructores
+import AdminTabNavigation from '../navegation/NavegationITR/AdminTabNavigation';
+
 const Stack = createStackNavigator();
 
 const NavStack = () => {
@@ -36,6 +39,10 @@ const NavStack = () => {
             <Stack.Screen
                 name="InstructoritrStack"
                 component={InstructoritrStack}
+                options={{ headerShown: false }} />
+            <Stack.Screen
+                name='AdminTabNavigation'
+                component={AdminTabNavigation}
                 options={{ headerShown: false }} />
 
         </Stack.Navigator>

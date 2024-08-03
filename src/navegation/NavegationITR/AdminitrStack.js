@@ -16,7 +16,7 @@ const AdminitrStack = () => {
         <Stack.Navigator initialRouteName='PrestamosScreen'>
             <Stack.Screen
                 name="PrestamosScreen"
-                component={EspaciosAsignados}
+                component={PrestamosScreen}
                 options={{ headerShown: false }} // Oculta el encabezado (header) de la pantalla.
             />
         </Stack.Navigator>
