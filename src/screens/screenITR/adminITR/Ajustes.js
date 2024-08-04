@@ -35,17 +35,9 @@ const PrestamoScreen = () => {
 
                 <Text style={styles.title}
                 //*Recreacion de la tarjeta*/
-                >Prestamos Realizados por el Ricaldone hacia Insaford</Text>
+                >Ajustes</Text>
                 
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        data={Data}
-                        numColumns={1} // Número de columnas
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        contentContainerStyle={styles.flatListContent}
-                    />
-                </View>
+                
             </View>
         </BackgroundImage>
     );

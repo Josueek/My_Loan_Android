@@ -35,7 +35,7 @@ const PrestamoScreen = () => {
 
                 <Text style={styles.title}
                 //*Recreacion de la tarjeta*/
-                >Prestamos Realizados por el Ricaldone hacia Insaford</Text>
+                >Espacios registrador por el Ricaldone</Text>
                 
                 <View style={styles.flatListContainer}>
                     <FlatList

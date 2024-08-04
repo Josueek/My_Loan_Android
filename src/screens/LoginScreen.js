@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
     const [clave, setClave] = useState(''); // Estado para la contraseña
 
     const Fast = () => {
-        navigation.navigate('AdminITRStack');
+        navigation.navigate('AdminTabNavigation');
     }
 
 
@@ -30,17 +30,34 @@ export default function LoginScreen({ navigation }) {
         //Parametros de la API
         const response = await fetchData('login_services', 'login', form);
         //Condicional si los parametros son correctos
+        // Condicional si los parametros son correctos
         if (response.status === 1) {
-            Alert.alert('Sesion iniciada correctamente'.response.message);
-            //Condicion para los diferentes niveles
+            Alert.alert('Sesión iniciada correctamente', response.message);
+
+            // Condición para los diferentes niveles
+            //institucion de Ricaldone === 1
             if (response.institucion === 1) {
-                Alert.alert('Sesion iniciada Ricaldone'.response.message);
-                navigation.navigate('InstructoritrStack');
+                //Cargo === 1 es Admin
+                if (response.cargo === 1) {
+                    //Muestra el nombre
+                    Alert.alert('Bienvenido', response.nombre)
+                    navigation.navigate('AdminTabNavigation'); // Admin ITR
+                } else if (response.cargo === 2) {
+                    navigation.navigate('InstructorITRStack'); // Instructor ITR
+                }
+            } //Institucion === 2 es CFP
+             else if (response.institucion === 2) {
+                //Cargo 1 es admin
+                if (response.cargo === 1) {
+                    navigation.navigate('AdminCFPStack'); // Admin CFP
+                } else if (response.cargo === 2) {
+                    navigation.navigate('InstructorCFPStack'); // Instructor CFP
+                }
             } else {
-                Alert.alert('No se encontro una sesion'.response.message);
+                Alert.alert('No se encontró una sesión válida');
             }
         } else {
-            Alert.alert('Inicio de sesión fallido', response.error || 'Unknown error');
+            Alert.alert('Inicio de sesión fallido', response.error || 'Error desconocido');
         }
     };
 
@@ -68,7 +85,7 @@ export default function LoginScreen({ navigation }) {
                     />
                     <Buttons
                         textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
-                        accionBoton={Fast}
+                        accionBoton={handleLogin}
                         style={styles.Iniciar}
                         color="Amarillo"
                     />
