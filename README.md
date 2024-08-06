@@ -27,3 +27,9 @@ Nombrado de Variables: Sigue la convención de camelCase para nombres de variabl
 Nombrado de Clases y Métodos: Sigue la convención UpperCamelCase para nombres de clases y lowerCamelCase para nombres de métodos (por ejemplo, LoginActivity, obtenerUsuarios()).
 
 Comentarios: Documenta tu código utilizando comentarios claros y concisos."# NetSport-Android" 
+
+Forma de guardar datos y jalar los datos almacenados
+Guardamos jalando datos de la API
+await AsyncStorage.setItem('user_id', response.id_usuario.toString());
+Obtnemos el valor guardaddo
+const user_id = await AsyncStorage.getItem('user_id');

@@ -8,6 +8,9 @@ import Input from '../components/Inputs/TextInput';
 import Buttons from '../components/Buttons/Buttons';
 //Plantilla para la hacer las peticiones
 import fetchData from '../utils/fetchData';
+// Guardar el id del cliente iniciado
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
@@ -20,39 +23,48 @@ export default function LoginScreen({ navigation }) {
 
     // Función para manejar el inicio de sesión
     const handleLogin = async () => {
+        if (Correo.trim() === '' || clave.trim() === '') {
+            Alert.alert('Error', 'Por favor, completa todos los campos');
+            return;
+        }
+
         const form = new FormData();
-        //Mandamos los parametros de los datos de correo y clave
+        // Mandamos los parametros de los datos de correo y clave
         form.append('correo_electronico', Correo);
         form.append('contrasena', clave);
 
-        //Parametros de la API
+        // Parametros de la API
         const response = await fetchData('login_services', 'login', form);
-        //Condicional si los parametros son correctos
-        // Condicional si los parametros son correctos
-        if (response.status === 1) {
-            Alert.alert('Sesión iniciada correctamente', response.message);
 
-            // Condición para los diferentes niveles
+        //Condicional para verificar los niveles de usuario
+        if (response.status === 1) {
+            //Si la sesion es correcta, guardamos el id del usuario logueado
+            await AsyncStorage.setItem('user_id', response.id_usuario.toString());
+
             //institucion de Ricaldone === 1
             if (response.institucion === 1) {
                 //Cargo === 1 es Admin
-                if (response.cargo === 1) {
-                    //Muestra el nombre
+                if (response.cargo === 1 || response.cargo === 2) {
+                    //Muestra el nombre y luego pasa al menu correspondiente
                     Alert.alert('Bienvenido', response.nombre)
-                    navigation.navigate('AdminTabNavigation'); // Admin ITR
-                } else if (response.cargo === 2) {
-                    navigation.navigate('InstructorITRStack'); // Instructor ITR
+                    navigation.navigate('AdminTabNavigation'); // Adwhmin ITR
+
+                } else if (response.cargo === 3) {
+                    Alert.alert('Bienvenido, ', response.nombre)
+                    navigation.navigate('InstructoritrStack'); // Instructor ITR
                 }
             } //Institucion === 2 es CFP
-             else if (response.institucion === 2) {
+            else if (response.institucion === 2) {
                 //Cargo 1 es admin 
                 if (response.cargo === 1) {
+                    Alert.alert('Bienvenido', response.nombre)
                     navigation.navigate('AdmincfpStack'); // Admin CFP
-                } else if (response.cargo === 2) {
-                    navigation.navigate('InstructorCFPStack'); // Instructor CFP
+                } else if (response.cargo === 3) {
+                    Alert.alert('Bienvenido', response.nombre)
+                    navigation.navigate('InstructorcfpStack'); // Instructor CFP
                 }
             } else {
-                Alert.alert('No se encontró una sesión válida');
+                Alert.alert('Acceso denegado, cuenta no valida');
             }
         } else {
             Alert.alert('Inicio de sesión fallido', response.error || 'Error desconocido');
