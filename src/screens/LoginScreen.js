@@ -9,7 +9,6 @@ import Buttons from '../components/Buttons/Buttons';
 //Plantilla para la hacer las peticiones
 import fetchData from '../utils/fetchData';
 
-
 // Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
     const [Correo, setCorreo] = useState(''); // Estado para el nombre de usuario
@@ -18,7 +17,6 @@ export default function LoginScreen({ navigation }) {
     const Fast = () => {
         navigation.navigate('AdminTabNavigation');
     }
-
 
     // Función para manejar el inicio de sesión
     const handleLogin = async () => {
@@ -47,9 +45,9 @@ export default function LoginScreen({ navigation }) {
                 }
             } //Institucion === 2 es CFP
              else if (response.institucion === 2) {
-                //Cargo 1 es admin
+                //Cargo 1 es admin 
                 if (response.cargo === 1) {
-                    navigation.navigate('AdminCFPStack'); // Admin CFP
+                    navigation.navigate('AdmincfpStack'); // Admin CFP
                 } else if (response.cargo === 2) {
                     navigation.navigate('InstructorCFPStack'); // Instructor CFP
                 }
