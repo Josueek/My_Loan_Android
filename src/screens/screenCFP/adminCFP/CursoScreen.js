@@ -4,20 +4,22 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundImage from '../../../components/BackgroundImage';
 import Button from '../../../components/Buttons/Buttons';
-import CursoCard from '../../../components/Cards/CursoCard'; // Importa el nuevo componente
+import CursoCard from '../../../components/Cards/CursoCard';
 import fetchData, { deleteCurso } from '../../../utils/fetchDataCursos';
 
 const CursoScreen = () => {
     const [cursos, setCursos] = useState([]);
-    const [refreshing, setRefreshing] = useState(false); // Estado para manejar la actualización
+    const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
 
     useEffect(() => {
-        // Función para obtener los datos de la API
         const obtenerCursos = async () => {
             try {
                 const form = new FormData();
                 const response = await fetchData('curso_services', 'getAllCursos', form);
+
+                // Verifica la respuesta de la API
+                console.log('API Response:', response);
 
                 if (response && response.dataset) {
                     setCursos(response.dataset);
@@ -32,12 +34,14 @@ const CursoScreen = () => {
         obtenerCursos();
     }, []);
 
-    // Función para actualizar los datos al hacer scroll
     const onRefresh = async () => {
         setRefreshing(true);
         try {
             const form = new FormData();
             const response = await fetchData('curso_services', 'getAllCursos', form);
+
+            // Verifica la respuesta de la API
+            console.log('API Response on Refresh:', response);
 
             if (response && response.dataset) {
                 setCursos(response.dataset);
@@ -51,16 +55,14 @@ const CursoScreen = () => {
         }
     };
 
-    // Función para navegar hacia la pantalla de agregar curso
     const AgregarCurso = () => {
         navigation.navigate('CrearCursosScreen');
     }
 
-    // Función para eliminar un curso
     const EliminarCurso = (curso) => {
         Alert.alert(
             "Confirmación",
-            "¿Deseas Eliminar este curso?",
+            "¿Deseas eliminar este curso?",
             [
                 {
                     text: "Cancelar",
@@ -75,7 +77,7 @@ const CursoScreen = () => {
                             if (response.status === 1) {
                                 setCursos(cursos.filter(c => c.id_curso !== curso.id_curso));
                                 console.log("Curso eliminado:", curso.id_curso);
-                                Alert.alert('Curso eliminado correctamente')
+                                Alert.alert('Curso eliminado correctamente');
                             } else {
                                 console.error("Error al eliminar el curso:", response.message);
                             }
@@ -88,7 +90,6 @@ const CursoScreen = () => {
         );
     }
 
-    // Función para editar un curso
     const EditarCurso = async (curso) => {
         try {
             await AsyncStorage.setItem('id_curso', curso.id_curso.toString());
@@ -98,14 +99,13 @@ const CursoScreen = () => {
             console.error("Error al guardar el id del curso:", error);
         }
     }
-    //Si no hay cursos para mostrar
+
     const ListEmptyComponent = () => (
         <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No hay cursos registrados</Text>
         </View>
     );
 
-    // Función para renderizar cada elemento del FlatList
     const renderItem = ({ item }) => {
         return (
             <CursoCard
@@ -125,10 +125,10 @@ const CursoScreen = () => {
                 <Text style={styles.title}>Listado de cursos registrados</Text>
                 <View style={styles.flatListContainer}>
                     <FlatList
-                        data={cursos} // Usa el estado de cursos en lugar de Data
-                        numColumns={1} // Número de columnas
+                        data={cursos} 
+                        numColumns={1} 
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id_curso.toString()} // Asegúrate de que el keyExtractor use id_curso como cadena
+                        keyExtractor={(item) => item.id_curso.toString()} 
                         contentContainerStyle={styles.flatListContent}
                         refreshControl={
                             <RefreshControl
@@ -136,7 +136,7 @@ const CursoScreen = () => {
                                 onRefresh={onRefresh}
                             />
                         }
-                        ListEmptyComponent={ListEmptyComponent} // Muestra el mensaje cuando no hay cursos
+                        ListEmptyComponent={ListEmptyComponent}
                     />
                 </View>
                 <Button
@@ -148,7 +148,6 @@ const CursoScreen = () => {
         </BackgroundImage>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {

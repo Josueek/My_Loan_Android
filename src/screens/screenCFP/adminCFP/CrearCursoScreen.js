@@ -11,8 +11,8 @@ import fetchDataCursos from '../../../utils/fetchDataCursos'; // Asegúrate de q
 
 export default function CrearCursoScreen() {
     const [nombre, setNombre] = useState('');
-    const [fechaInicio, setFechaInicio] = useState();
-    const [fechaFin, setFechaFin] = useState();
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
     const [cantidadPersonas, setCantidadPersonas] = useState('');
     const [grupo, setGrupo] = useState('');
     const [programaFormacion, setProgramaFormacion] = useState('');
@@ -42,26 +42,28 @@ export default function CrearCursoScreen() {
     };
 
     // Función para cargar los programas de formación
-    const CargarPrograma = async () => {
-        try {
-            const response = await fetchDataCursos('curso_services', 'getProgramaFormacion');
-            if (response.status === 1) {
-                setProgramas(response.dataset.map(programa => ({
-                    label: programa.Programa_formacion,
-                    value: programa.Programa_formacion
-                })));
-            } else {
-                console.error('Error al obtener programas:', response.message);
-            }
-        } catch (error) {
-            console.error('Error al cargar programas:', error);
+// Suponiendo que fetchDataCursos es una función que maneja las solicitudes
+const cargarPrograma = async () => {
+    try {
+        const response = await fetchDataCursos('curso_services', 'getProgramaFormacion');
+        if (response.status === 1) {
+            setProgramas(response.dataset.map(programa => ({
+                label: programa.Programa_formacion,
+                value: programa.Programa_formacion
+            })));
+        } else {
+            console.error('Error al obtener programas:', response.message);
         }
-    };
+    } catch (error) {
+        console.error('Error al cargar programas:', error);
+    }
+};
+
 
     // Función para cargar los estados del curso
-    const CargarEstado = async () => {
+    const cargarEstado = async () => {
         try {
-            const response = await fetchDataCursos('curso_services', 'getEstadoCurso');
+            const response = await fetchDataCursos('empleado_services', 'getCurso');
             if (response.status === 1) {
                 setEstados(response.dataset.map(estado => ({
                     label: estado.estado,
@@ -77,15 +79,15 @@ export default function CrearCursoScreen() {
 
     useEffect(() => {
         cargarEmpleados();
-        CargarPrograma();
-        CargarEstado();
+        cargarPrograma();
+        cargarEstado();
     }, []);
 
-    const Volver = () => {
+    const volver = () => {
         navigation.navigate('AdmincfpTabNavigator');
     };
 
-    const AgregarCurso = async () => {
+    const agregarCurso = async () => {
         // Validación de campos vacíos
         if (!nombre || !fechaInicio || !fechaFin || !cantidadPersonas || !grupo || !programaFormacion || !codigoCurso || !empleado || !estado) {
             Alert.alert('Error', 'Por favor, completa todos los campos.');
@@ -116,7 +118,6 @@ export default function CrearCursoScreen() {
             Alert.alert('Error', 'Hubo un problema al agregar el curso.');
         }
     };
-
 
     return (
         <BackgroundImage background="AdminCFP">
@@ -230,23 +231,22 @@ export default function CrearCursoScreen() {
                                     placeholder="Estado"
                                 />
                             </View>
-
                         </View>
                     </ScrollView>
                 </View>
                 <View style={styles.row}>
                     <View style={styles.column}>
                         <Buttons
-                            color={"Amarillo"}
-                            textoBoton={'Agregar'}
-                            accionBoton={AgregarCurso}
+                            color="Amarillo"
+                            textoBoton="Agregar"
+                            accionBoton={agregarCurso}
                         />
                     </View>
                     <View style={styles.column}>
                         <Buttons
-                            textoBoton={'Volver'}
+                            textoBoton="Volver"
                             color="Gris"
-                            accionBoton={Volver}
+                            accionBoton={volver}
                         />
                     </View>
                 </View>
@@ -302,4 +302,5 @@ const styles = StyleSheet.create({
     input: {
         marginTop: 5,
     }
+
 });

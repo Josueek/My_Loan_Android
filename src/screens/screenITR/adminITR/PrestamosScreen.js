@@ -83,7 +83,7 @@ const PrestamoScreen = () => {
                         data={data}
                         numColumns={1}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item.id ? item.id.toString() : ''}
                         contentContainerStyle={styles.flatListContent}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
