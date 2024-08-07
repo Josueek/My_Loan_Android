@@ -1,26 +1,63 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, Alert, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// Componente para el fondo de pantalla
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundImage from '../../../components/BackgroundImage';
-// Datos que se muestran en las tarjetas
-import Data from '../../../data/dataCFP/CursosCFP';
-//Componente boton
 import Button from '../../../components/Buttons/Buttons';
-//Libreria de iconos
-import Icon from 'react-native-vector-icons/Ionicons';
+import CursoCard from '../../../components/Cards/CursoCard'; // Importa el nuevo componente
+import fetchData from '../../../utils/fetchDataCursos';
 
-// Pantalla que muestra todos los cursos 
 const CursoScreen = () => {
+    const [cursos, setCursos] = useState([]);
+    const [refreshing, setRefreshing] = useState(false); // Estado para manejar la actualización
     const navigation = useNavigation();
 
-    //Funciona para navegar hacia la pantalla de agregar curso
+    useEffect(() => {
+        // Función para obtener los datos de la API
+        const obtenerCursos = async () => {
+            try {
+                const form = new FormData();
+                const response = await fetchData('curso_services', 'getAllCursos', form);
+
+                if (response && response.dataset) {
+                    setCursos(response.dataset);
+                } else {
+                    console.error("Estructura de respuesta inesperada:", response);
+                }
+            } catch (error) {
+                console.error("Error al obtener los cursos:", error);
+            }
+        };
+
+        obtenerCursos();
+    }, []);
+
+    // Función para actualizar los datos al hacer scroll
+    const onRefresh = async () => {
+        setRefreshing(true);
+        try {
+            const form = new FormData();
+            const response = await fetchData('curso_services', 'getAllCursos', form);
+
+            if (response && response.dataset) {
+                setCursos(response.dataset);
+            } else {
+                console.error("Estructura de respuesta inesperada:", response);
+            }
+        } catch (error) {
+            console.error("Error al obtener los cursos:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    // Función para navegar hacia la pantalla de agregar curso
     const AgregarCurso = () => {
         navigation.navigate('CrearCursosScreen');
     }
-    //Funciona para la accion del boton
-    const EliminarCurso = () => {
-        //Cuando se preciona el boton mandamos una alerta
+
+    // Función para eliminar un curso
+    const EliminarCurso = (curso) => {
         Alert.alert(
             "Confirmación",
             "¿Deseas Eliminar este curso?",
@@ -30,34 +67,30 @@ const CursoScreen = () => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => console.log("OK Pressed") }
+                { text: "OK", onPress: () => console.log("Curso eliminado:", curso) } // Aquí puedes agregar la lógica para eliminar el curso
             ]
         );
     }
 
-    // Funcions para ver el estilo de la carta renderizada
+    // Función para editar un curso
+    const EditarCurso = async (curso) => {
+        try {
+            await AsyncStorage.setItem('id_curso', curso.id_curso.toString());
+            console.log("Curso seleccionado para edición:", curso.id_curso);
+            navigation.navigate('EditarCurso', { item: curso });
+        } catch (error) {
+            console.error("Error al guardar el id del curso:", error);
+        }
+    }
+
+    // Función para renderizar cada elemento del FlatList
     const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity
-                style={styles.cardContainer}
-                onPress={() => navigation.navigate('EditarCurso', { item })}
-            >
-                <View style={styles.header}>
-                    <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-                    <Text style={styles.codigo}>{item.Codigo}</Text>
-                </View>
-                <Text style={styles.nombre}>{item.Nombre}</Text>
-                <Text style={styles.instructor}>{item.Instructor}</Text>
-                <View style={styles.footer}>
-                    <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
-                    <Text style={styles.fecha}>Inicio: {item.FechaInicio}</Text>
-                    <TouchableOpacity style={styles.botontrash}
-                    onPress={EliminarCurso}>
-                        <Icon name="trash" size={20} color="#fff" />
-                    </TouchableOpacity>
-
-                </View>
-            </TouchableOpacity>
+            <CursoCard
+                item={item}
+                onEdit={() => EditarCurso(item)}
+                onDelete={() => EliminarCurso(item)}
+            />
         );
     };
 
@@ -70,11 +103,17 @@ const CursoScreen = () => {
                 <Text style={styles.title}>Listado de cursos registrados</Text>
                 <View style={styles.flatListContainer}>
                     <FlatList
-                        data={Data}
+                        data={cursos} // Usa el estado de cursos en lugar de Data
                         numColumns={1} // Número de columnas
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.id_curso.toString()} // Asegúrate de que el keyExtractor use id_curso como cadena
                         contentContainerStyle={styles.flatListContent}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
                     />
                 </View>
                 <Button
@@ -97,60 +136,6 @@ const styles = StyleSheet.create({
         padding: 10,
         height: '65%',
     },
-    cardContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 20,
-        marginHorizontal: 15,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 3,
-        width: 375,
-        height: 170,
-        marginBottom: 30,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    estado: {
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    codigo: {
-        fontSize: 14,
-        color: '#666',
-    },
-    nombre: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginVertical: 5,
-        marginVertical: 20,
-    },
-    instructor: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 5,
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    cantidad: {
-        fontSize: 14,
-        color: '#666',
-    },
-    fecha: {
-        fontSize: 14,
-        color: '#666',
-    },
-    estadoActivo: {
-        color: '#2ecc71',
-    },
-    estadoInactivo: {
-        color: '#e74c3c',
-    },
     logo: {
         width: 125,
         height: 80,
@@ -163,14 +148,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 20,
         textAlign: 'center',
-    }, botontrash: {
-        backgroundColor: '#ff0000',
-        width: 30,
-        height: 25,
-        borderRadius: 5,
-        padding: 3,
-        paddingLeft: 5,
-        alignContent: 'center',
     }
 });
 

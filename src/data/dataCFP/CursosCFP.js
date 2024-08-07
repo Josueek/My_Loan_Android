@@ -13,7 +13,7 @@ const Data = [
     {
         id: '2',
         Nombre: 'Curso de Eca',
-        estado: 'Inactivo',
+        estado: 'En Curso',
         Codigo: 'QW545W',
         FechaInicio: '30/06/2024',
         Instructor: 'Tulio Granados',
