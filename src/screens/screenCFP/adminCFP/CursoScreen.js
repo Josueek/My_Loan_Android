@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundImage from '../../../components/BackgroundImage';
 import Button from '../../../components/Buttons/Buttons';
 import CursoCard from '../../../components/Cards/CursoCard'; // Importa el nuevo componente
-import fetchData from '../../../utils/fetchDataCursos';
+import fetchData, { deleteCurso } from '../../../utils/fetchDataCursos';
 
 const CursoScreen = () => {
     const [cursos, setCursos] = useState([]);
@@ -67,7 +67,23 @@ const CursoScreen = () => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => console.log("Curso eliminado:", curso) } // Aquí puedes agregar la lógica para eliminar el curso
+                {
+                    text: "OK",
+                    onPress: async () => {
+                        try {
+                            const response = await deleteCurso(curso.id_curso);
+                            if (response.status === 1) {
+                                setCursos(cursos.filter(c => c.id_curso !== curso.id_curso));
+                                console.log("Curso eliminado:", curso.id_curso);
+                                Alert.alert('Curso eliminado correctamente')
+                            } else {
+                                console.error("Error al eliminar el curso:", response.message);
+                            }
+                        } catch (error) {
+                            console.error("Error al eliminar el curso:", error);
+                        }
+                    }
+                }
             ]
         );
     }
@@ -82,6 +98,12 @@ const CursoScreen = () => {
             console.error("Error al guardar el id del curso:", error);
         }
     }
+    //Si no hay cursos para mostrar
+    const ListEmptyComponent = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No hay cursos registrados</Text>
+        </View>
+    );
 
     // Función para renderizar cada elemento del FlatList
     const renderItem = ({ item }) => {
@@ -114,6 +136,7 @@ const CursoScreen = () => {
                                 onRefresh={onRefresh}
                             />
                         }
+                        ListEmptyComponent={ListEmptyComponent} // Muestra el mensaje cuando no hay cursos
                     />
                 </View>
                 <Button
@@ -125,6 +148,7 @@ const CursoScreen = () => {
         </BackgroundImage>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -148,6 +172,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 20,
         textAlign: 'center',
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyText: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: '#555',
     }
 });
 
