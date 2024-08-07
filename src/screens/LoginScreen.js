@@ -1,27 +1,65 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert, Image } from 'react-native';
-//Componente para establecer los fondos de pantalla
+import { StyleSheet, Text, View, Alert, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import BackgroundImage from '../components/BackgroundImage';
-//Componente Input
 import Input from '../components/Inputs/TextInput';
-//Componente Button
 import Buttons from '../components/Buttons/Buttons';
-//Plantilla para la hacer las peticiones
-import fetchData from '../utils/fetchData';
-// Guardar el id del cliente iniciado
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Constantes from '../utils/constantes';
 
-
-// Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
-    const [Correo, setCorreo] = useState(''); // Estado para el nombre de usuario
-    const [clave, setClave] = useState(''); // Estado para la contraseña
+    const [Correo, setCorreo] = useState('');
+    const [clave, setClave] = useState('');
+    const ip = Constantes.IP;
 
-    const Fast = () => {
-        navigation.navigate('AdminTabNavigation');
-    }
+    const fetchUserData = async (userId) => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/miperfil_services.php?action=getProfile&id=${userId}`);
+            const data = await response.json();
 
-    // Función para manejar el inicio de sesión
+            if (data.status === 1 && data.dataset) {
+                const { institucion, cargo } = data.dataset;
+
+                if (institucion === 'Institución A') {
+                    if (cargo === 'Gerente' || cargo === 'Supervisor') {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'AdminTabNavigation' }],
+                        });
+                    } else if (cargo === 'Técnico') {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'InstructoritrStack' }],
+                        });
+                    } else {
+                        Alert.alert('Error', 'Cargo no válido');
+                    }
+                } else if (institucion === 'Institución B') {
+                    if (cargo === 'Gerente') {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'AdmincfpStack' }],
+                        });
+                    } else if (cargo === 'Técnico') {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'InstructorcfpStack' }],
+                        });
+                    } else {
+                        Alert.alert('Error', 'Cargo no válido');
+                    }
+                } else {
+                    Alert.alert('Error', 'Institución no válida');
+                }
+            } else {
+                Alert.alert('Error', 'No se pudieron obtener los datos del usuario');
+            }
+        } catch (error) {
+            console.error('Fetch User Data Error:', error);
+            Alert.alert('Error', 'Ocurrió un error al obtener los datos del usuario');
+        }
+    };
+
     const handleLogin = async () => {
         if (Correo.trim() === '' || clave.trim() === '') {
             Alert.alert('Error', 'Por favor, completa todos los campos');
@@ -29,100 +67,96 @@ export default function LoginScreen({ navigation }) {
         }
 
         const form = new FormData();
-        // Mandamos los parametros de los datos de correo y clave
         form.append('correo_electronico', Correo);
         form.append('contrasena', clave);
 
-        // Parametros de la API
-        const response = await fetchData('login_services', 'login', form);
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/login_services.php?action=login`, {
+                method: 'POST',
+                body: form,
+            });
 
-        //Condicional para verificar los niveles de usuario
-        if (response.status === 1) {
-            //Si la sesion es correcta, guardamos el id del usuario logueado
-            await AsyncStorage.setItem('user_id', response.id_usuario.toString());
+            const data = await response.json();
 
-            //institucion de Ricaldone === 1
-            if (response.institucion === 1) {
-                //Cargo === 1 es Admin
-                if (response.cargo === 1 || response.cargo === 2) {
-                    //Muestra el nombre y luego pasa al menu correspondiente
-                    Alert.alert('Bienvenido', response.nombre)
-                    navigation.navigate('AdminTabNavigation'); // Adwhmin ITR
-
-                } else if (response.cargo === 3) {
-                    Alert.alert('Bienvenido, ', response.nombre)
-                    navigation.navigate('InstructoritrStack'); // Instructor ITR
-                }
-            } //Institucion === 2 es CFP
-            else if (response.institucion === 2) {
-                //Cargo 1 es admin 
-                if (response.cargo === 1) {
-                    Alert.alert('Bienvenido', response.nombre)
-                    navigation.navigate('AdmincfpStack'); // Admin CFP
-                } else if (response.cargo === 3) {
-                    Alert.alert('Bienvenido', response.nombre)
-                    navigation.navigate('InstructorcfpStack'); // Instructor CFP
-                }
+            if (data.status === 1) {
+                await AsyncStorage.setItem('user_id', data.id_usuario.toString());
+                fetchUserData(data.id_usuario);
             } else {
-                Alert.alert('Acceso denegado, cuenta no valida');
+                Alert.alert('Inicio de sesión fallido', data.error || 'Error desconocido');
             }
-        } else {
-            Alert.alert('Inicio de sesión fallido', response.error || 'Error desconocido');
+        } catch (error) {
+            console.error('Login Error:', error);
+            Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
         }
     };
 
     return (
         <BackgroundImage background="login">
-            <View style={styles.container}>
-                <Image
-                    source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
-                    style={styles.logo}
-                />
-                <View style={styles.card}>
-                    <Text style={styles.title}>Ingresa tu correo electrónico</Text>
-                    <Input
-                        placeHolder="Correo electrónico" // Campo de entrada para el nombre de usuario
-                        valor={Correo}
-                        setTextChange={setCorreo}
-                        contra={false}
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // Ajusta según sea necesario
+            >
+                <KeyboardAwareScrollView
+                    contentContainerStyle={styles.scrollViewContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Image
+                        source={require('../../assets/myloanLogo.png')}
+                        style={styles.logo}
                     />
-                    <Text style={styles.title}>Ingresa tu contraseña</Text>
-                    <Input
-                        placeHolder="Contraseña" // Campo de entrada para la contraseña
-                        valor={clave}
-                        setTextChange={setClave}
-                        contra={true}
-                    />
-                    <Buttons
-                        textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
-                        accionBoton={handleLogin}
-                        style={styles.Iniciar}
-                        color="Amarillo"
-                    />
-                </View>
-            </View>
+                    <View style={styles.card}>
+                        <Text style={styles.title}>Ingresa tu correo electrónico</Text>
+                        <Input
+                            placeHolder="Correo electrónico"
+                            valor={Correo}
+                            setTextChange={setCorreo}
+                            contra={false}
+                            keyboardType="email-address" // Configura el teclado para correo electrónico
+                        />
+                        <Text style={styles.title}>Ingresa tu contraseña</Text>
+                        <Input
+                            placeHolder="Contraseña"
+                            valor={clave}
+                            setTextChange={setClave}
+                            contra={true}
+                            keyboardType="default" // Configura el teclado para contraseñas
+                        />
+                        <Buttons
+                            textoBoton={'Iniciar sesión'}
+                            accionBoton={handleLogin}
+                            style={styles.Iniciar}
+                            color="Amarillo"
+                        />
+                    </View>
+                </KeyboardAwareScrollView>
+            </KeyboardAvoidingView>
         </BackgroundImage>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // Ocupa todo el espacio disponible
-        justifyContent: 'center', // Centra el contenido verticalmente
-        alignItems: 'center', // Centra el contenido horizontalmente
+        flex: 1,
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
     },
     title: {
         fontSize: 15,
         fontWeight: 'bold',
         marginBottom: 10,
         marginTop: 10,
-        color: '#000', // Estilo del texto del título
+        color: '#000',
     },
     logo: {
         width: 150,
         height: 150,
         resizeMode: 'contain',
-        marginBottom: 20, // Estilo del logo
+        marginBottom: 20,
     },
     card: {
         backgroundColor: '#fff',
@@ -135,10 +169,10 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: '100%',
         alignItems: 'center',
-        height: '35%',
-        justifyContent: 'center', // Estilo de la tarjeta que contiene el formulario de inicio de sesión
+        height: 'auto',
+        justifyContent: 'center',
     },
     Iniciar: {
-        marginTop: 20, // Estilo del botón de inicio de sesión
+        marginTop: 20,
     }
 });

@@ -1,7 +1,7 @@
 
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
-export default function Input({ placeHolder, Valor, contra, setTextChange, editable = true }) {
+export default function Input({ placeHolder, Valor, contra, setTextChange, keyboardType, editable = true }) {
   // Componente para establecer un estilo de input general en todo el proyecto
   return (
 
@@ -13,6 +13,7 @@ export default function Input({ placeHolder, Valor, contra, setTextChange, edita
       secureTextEntry={contra}
       onChangeText={(text) => setTextChange(text)}
       editable={editable}//Propiedad para activar o desactivar
+      keyboardType={keyboardType}
     />
 
   );

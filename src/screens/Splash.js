@@ -19,8 +19,11 @@ export default function SplashScreen() {
 
     useEffect(() => {
         if (counter === 0) {
-            // Navega a la pantalla de inicio de sesión cuando el contador llega a cero
-            navigation.navigate('Login');
+            // Reemplaza la pila de navegación actual con la pantalla de inicio de sesión
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
         }
     }, [counter]); // Efecto se ejecuta cada vez que cambia el valor del contador
 
