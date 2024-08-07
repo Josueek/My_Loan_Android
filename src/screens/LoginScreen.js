@@ -95,7 +95,7 @@ export default function LoginScreen({ navigation }) {
                     />
                     <Buttons
                         textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
-                        accionBoton={handleLogin}
+                        accionBoton={Fast}
                         style={styles.Iniciar}
                         color="Amarillo"
                     />
