@@ -1,137 +1,174 @@
-// CursoDetalle.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
-//Componente para el fondo de pantalla
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
-//Datos que se muestran en las tarjetas
-import Data from '../../../data/dataCFP/PrestamosCFP';
-//Pantalla que muestra los todos los prestamos 
-const PrestamoScreen = () => {
-    //Estilo de la carte renderizado
-    const renderItem = ({ item }) => {
-        return (
-            <View style={styles.cardContainer}>
-                <View style={styles.header}>
-                    <Text style={[styles.tipo, styles[`tipo${item.tipo}`]]}>{item.tipo}</Text>
-                    <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-                </View>
-                <Text style={styles.material}>{item.Material}</Text>
-                <Text style={styles.persona}>{item.persona}</Text>
-                <View style={styles.footer}>
-                    <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
-                    <Text style={styles.fecha}>{item.fecha}</Text>
-                </View>
-            </View>
-        );
+import * as Constantes from '../../../utils/constantes';
+
+const SettingsScreen = ({ navigation }) => {
+    const [userData, setUserData] = useState({
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        estado: '',
+        foto: '',
+        especialidad: ''
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const ip = Constantes.IP;
+
+    const fetchUserData = async () => {
+        try {
+            // Cambia el endpoint para que devuelva datos de la tabla `tb_datos_empleados`
+            const response = await fetch(`${ip}/MyLoan-new/api/services/empleado_services.php?action=getEmpleado`);
+            const result = await response.json();
+            if (result.status === 1) {
+                setUserData({
+                    nombre: result.dataset.nombre_empleado,
+                    apellido: result.dataset.apellido_empleado,
+                    telefono: result.dataset.telefono,
+                    estado: result.dataset.estado_empleado,
+                    foto: result.dataset.foto_empleado,
+                    especialidad: result.dataset.id_especialidad,
+                });
+            } else {
+                console.error('Unexpected data format:', result);
+                setError('Error al cargar datos');
+            }
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
+            setError('Error al cargar datos');
+            setLoading(false);
+        }
     };
-   
+
+    useEffect(() => {
+        fetchUserData();
+    }, []);
+
+    const handleLogout = () => {
+        // Aquí iría la lógica para cerrar sesión, por ejemplo, eliminar el token de autenticación
+        console.log('Cerrar sesión');
+        navigation.navigate('LoginScreen');
+    };
+
+    if (loading) {
+        return (
+            <BackgroundImage background="AdminCFP">
+                <View style={styles.container}>
+                    <Text>Cargando...</Text>
+                </View>
+            </BackgroundImage>
+        );
+    }
+
+    if (error) {
+        return (
+            <BackgroundImage background="AdminCFP">
+                <View style={styles.container}>
+                    <Text>{error}</Text>
+                </View>
+            </BackgroundImage>
+        );
+    }
 
     return (
         <BackgroundImage background="AdminCFP">
-            <View style={styles.container}>
-                <Image
-                    source={require('../../../../assets/myloanLogo.png')}
-                    style={styles.logo} />
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.title}>Ajustes</Text>
 
-                <Text style={styles.title}
-                //*Recreacion de la tarjeta*/
-                >Ajustes</Text>
-                
-                
-            </View>
+                <View style={styles.formContainer}>
+                    <Text style={styles.label}>Nombre</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.nombre}
+                        editable={false}
+                    />
+
+                    <Text style={styles.label}>Apellido</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.apellido}
+                        editable={false}
+                    />
+
+                    <Text style={styles.label}>Teléfono</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.telefono}
+                        editable={false}
+                    />
+
+                    <Text style={styles.label}>Estado</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.estado}
+                        editable={false}
+                    />
+
+                    <Text style={styles.label}>Foto</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.foto}
+                        editable={false}
+                    />
+
+                    <Text style={styles.label}>Especialidad</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userData.especialidad.toString()}
+                        editable={false}
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                    <Text style={styles.logoutText}>Cerrar Sesión</Text>
+                </TouchableOpacity>
+            </ScrollView>
         </BackgroundImage>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: 30,
+        flexGrow: 1,
+        padding: 20,
         alignItems: 'center',
     },
-    flatListContainer: {
-        padding: 5,
-        marginRight: 0,
-        height: '70%',
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
-    cardContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
+    formContainer: {
+        width: '100%',
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginVertical: 10,
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
         padding: 10,
-        marginHorizontal: 15,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 3,
-        width: 350,
-        height: 150,
-        marginBottom: 30,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    tipo: {
-        fontWeight: 'bold',
         fontSize: 16,
+        marginBottom: 15,
+        backgroundColor: '#f0f0f0',
     },
-    estado: {
+    logoutButton: {
+        backgroundColor: '#e74c3c',
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginTop: 30,
+    },
+    logoutText: {
+        color: '#fff',
+        fontSize: 18,
         fontWeight: 'bold',
-        fontSize: 16,
-    },
-    material: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginVertical: 5,
-        marginVertical: 20,
-    },
-    persona: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 5,
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    cantidad: {
-        fontSize: 14,
-        color: '#666',
-    },
-    fecha: {
-        fontSize: 14,
-        color: '#666',
-    },
-    tipoEquipo: {
-        color: '#FF0000',
-    },
-    tipoHerramienta: {
-        color: '#0B7F4B',
-    },
-    tipoMaterial: {
-        color: '#FCBE2D',
-    },
-    estadoAceptado: {
-        color: '#2ecc71',
-    },
-    estadoDenegado: {
-        color: '#e74c3c',
-    },
-    estadoEnEspera: {
-        color: '#f1c40f',
-    }, logo: {
-        width: 125,
-        height: 80,
-        marginTop: 50,
-        marginLeft: 30,
-        marginBottom: 30,
-        justifyContent: 'space-between',
-    }, title: {
-        fontSize: 23,
-        fontWeight: 'bold',
-        padding: 20,
-        textAlign: 'center',
     }
 });
 
-export default PrestamoScreen;
+export default SettingsScreen;

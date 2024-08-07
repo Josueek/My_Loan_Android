@@ -1,66 +1,118 @@
-// CursoDetalle.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
-//Componente para el fondo de pantalla
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl, ActivityIndicator, Dimensions, Modal, TouchableOpacity } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
-//Datos que se muestran en las tarjetas
-import Data from '../../../data/dataCFP/PrestamosCFP';
-//Pantalla que muestra los todos los prestamos 
-const PrestamoScreen = () => {
-    //Estilo de la carte renderizado
-    const renderItem = ({ item }) => {
-        return (
-            <View style={styles.cardContainer}>
-                <View style={styles.header}>
-                    <Text style={[styles.tipo, styles[`tipo${item.tipo}`]]}>{item.tipo}</Text>
-                    <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-                </View>
-                <Text style={styles.material}>{item.Material}</Text>
-                <Text style={styles.persona}>{item.persona}</Text>
-                <View style={styles.footer}>
-                    <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
-                    <Text style={styles.fecha}>{item.fecha}</Text>
-                </View>
-            </View>
-        );
+import * as Constantes from '../../../utils/constantes';
+import * as WebBrowser from 'expo-web-browser';
+
+const { width: screenWidth } = Dimensions.get('window');
+
+const EspaciosScreen = () => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [pdfUrl, setPdfUrl] = useState('');
+    const ip = Constantes.IP;
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getAllEspacios`);
+            const result = await response.json();
+            if (result.status === 1) {
+                const mappedData = result.dataset.map(item => ({
+                    id: item.id_espacio,
+                    nombre: item.nombre_espacio,
+                    capacidad: item.capacidad_personas,
+                    tipo: item.tipo_espacio,
+                    inventario: item.inventario_doc,
+                    foto: item.foto_espacio,
+                }));
+                setData(mappedData);
+            } else {
+                console.error('Unexpected data format:', result);
+            }
+            setLoading(false);
+            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+            setRefreshing(false);
+        }
     };
-   
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchData();
+    };
+
+    const openPdf = (url) => {
+        WebBrowser.openBrowserAsync(url);
+    };
+
+    const renderItem = ({ item }) => (
+        <View style={styles.cardContainer}>
+            {item.foto && (
+                <Image source={{ uri: `${ip}/MyLoan-new/api/images/espacios/${item.foto}` }} style={styles.foto} />
+            )}
+            <View style={styles.textContainer}>
+                <Text style={styles.nombre}>{item.nombre}</Text>
+                <Text style={styles.capacidad}>Capacidad: {item.capacidad} personas</Text>
+                <Text style={styles.tipo}>Tipo: {item.tipo}</Text>
+                {item.inventario && (
+                    <TouchableOpacity onPress={() => openPdf(`${ip}/MyLoan-new/api/inventario/${item.inventario}`)}>
+                        <Text style={styles.inventario}>Ver Inventario</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+        </View>
+    );
+
+    if (loading) {
+        return (
+            <BackgroundImage background="AdminCFP">
+                <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            </BackgroundImage>
+        );
+    }
 
     return (
         <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
                 <Image
                     source={require('../../../../assets/myloanLogo.png')}
-                    style={styles.logo} />
-
-                <Text style={styles.title}
-                //*Recreacion de la tarjeta*/
-                >Espacios registrador por el Ricaldone</Text>
-                
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        data={Data}
-                        numColumns={1} // Número de columnas
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        contentContainerStyle={styles.flatListContent}
-                    />
-                </View>
+                    style={styles.logo}
+                />
+                <Text style={styles.title}>Espacios Disponibles</Text>
+                <FlatList
+                    data={data}
+                    numColumns={1}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.flatListContent}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                />
             </View>
         </BackgroundImage>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 30,
         alignItems: 'center',
+        backgroundColor: '#f8f8f8',
     },
-    flatListContainer: {
-        padding: 5,
-        marginRight: 0,
-        height: '70%',
+    flatListContent: {
+        paddingBottom: 20,
     },
     cardContainer: {
         backgroundColor: '#fff',
@@ -71,75 +123,51 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 5,
         elevation: 3,
-        width: 350,
-        height: 150,
-        marginBottom: 30,
+        width: screenWidth * 0.9,
+        marginBottom: 20,
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    foto: {
+        width: '100%',
+        height: 120,
+        borderRadius: 10,
+        marginBottom: 10,
+        resizeMode: 'cover',
     },
-    tipo: {
+    textContainer: {
+        paddingHorizontal: 5,
+    },
+    nombre: {
+        fontSize: 18,
         fontWeight: 'bold',
-        fontSize: 16,
+        marginBottom: 5,
     },
-    estado: {
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    material: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginVertical: 5,
-        marginVertical: 20,
-    },
-    persona: {
+    capacidad: {
         fontSize: 16,
         color: '#666',
         marginBottom: 5,
     },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    tipo: {
+        fontSize: 16,
+        color: '#666',
+        marginBottom: 5,
     },
-    cantidad: {
+    inventario: {
         fontSize: 14,
         color: '#666',
+        textDecorationLine: 'underline',
     },
-    fecha: {
-        fontSize: 14,
-        color: '#666',
-    },
-    tipoEquipo: {
-        color: '#FF0000',
-    },
-    tipoHerramienta: {
-        color: '#0B7F4B',
-    },
-    tipoMaterial: {
-        color: '#FCBE2D',
-    },
-    estadoAceptado: {
-        color: '#2ecc71',
-    },
-    estadoDenegado: {
-        color: '#e74c3c',
-    },
-    estadoEnEspera: {
-        color: '#f1c40f',
-    }, logo: {
+    logo: {
         width: 125,
         height: 80,
         marginTop: 50,
-        marginLeft: 30,
         marginBottom: 30,
-        justifyContent: 'space-between',
-    }, title: {
+    },
+    title: {
         fontSize: 23,
         fontWeight: 'bold',
         padding: 20,
         textAlign: 'center',
-    }
+    },
 });
 
-export default PrestamoScreen;
+export default EspaciosScreen;
