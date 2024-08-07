@@ -20,13 +20,13 @@ export default function LoginScreen({ navigation }) {
             if (data.status === 1 && data.dataset) {
                 const { institucion, cargo } = data.dataset;
 
-                if (institucion === 'Institución A') {
+                if (institucion === 'Ricaldone') {
                     if (cargo === 'Gerente' || cargo === 'Supervisor') {
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'AdminTabNavigation' }],
                         });
-                    } else if (cargo === 'Técnico') {
+                    } else if (cargo === 'Instructor') {
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'InstructoritrStack' }],
@@ -34,13 +34,13 @@ export default function LoginScreen({ navigation }) {
                     } else {
                         Alert.alert('Error', 'Cargo no válido');
                     }
-                } else if (institucion === 'Institución B') {
+                } else if (institucion === 'Insaford') {
                     if (cargo === 'Gerente') {
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'AdmincfpStack' }],
                         });
-                    } else if (cargo === 'Técnico') {
+                    } else if (cargo === 'Instructor') {
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'InstructorcfpStack' }],

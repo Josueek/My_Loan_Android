@@ -9,9 +9,9 @@ const fetchDataCursos = async (filename, action, form = null) => {
     } else {
         OPTIONS.method = 'GET';
     }
-
+ 
     try {
-        const PATH = new URL(`${constantes.IP}/services/${filename}.php`);
+        const PATH = new URL(`${constantes.IP}/MyLoan-new/api/services/${filename}.php`);
         PATH.searchParams.append('action', action);
 
         const RESPONSE = await fetch(PATH.href, OPTIONS);
@@ -53,7 +53,7 @@ const deleteCurso = async (id) => {
         body: JSON.stringify({ id }),
     };
     try {
-        const PATH = new URL(`${constantes.IP}/services/curso_services.php`);
+        const PATH = new URL(`${constantes.IP}/MyLoan-new/api/services/${filename}.php`);
         PATH.searchParams.append('action', 'deleteCurso');
 
         const RESPONSE = await fetch(PATH.href, OPTIONS);
