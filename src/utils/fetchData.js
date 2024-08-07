@@ -16,7 +16,7 @@ const fetchData = async (filename, action, form = null) => {
         OPTIONS.method = 'GET'; 
     }
     try {
-        const PATH = new URL(`${constantes.IP}/services/${filename}.php`);
+        const PATH = new URL(`${constantes.IP}/MyLoan-new/api/services/${filename}.php`);
         PATH.searchParams.append('action', action);
 
         const RESPONSE = await fetch(PATH.href, OPTIONS);
