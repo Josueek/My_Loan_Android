@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import PrestamoScreen from '../../screens/screenCFP/adminCFP/PrestamoScreen';
 import CursoScreen from '../../screens/screenCFP/adminCFP/CursoScreen';
 import EspaciosScreen from '../../screens/screenCFP/adminCFP/EspaciosITRScreen';
+import Ajuestes from '../../screens/screenCFP/adminCFP/Ajustes';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,11 +18,13 @@ const AdmincfpTabNavigator = () => {
                     let iconName;
                     //Definimos los iconos y con el name se asigna
                     if (route.name === 'Prestamo') {
-                        iconName = 'notifications';
+                        iconName = 'notifications-outline';
                     } else if (route.name === 'CursoScreen') {
-                        iconName = 'bookmarks';
-                    } else if (route.name === 'EspaciosScreen'){
-                        iconName = 'home';
+                        iconName = 'bookmarks-outline';
+                    } else if (route.name === 'EspaciosScreen') {
+                        iconName = 'home-outline';
+                    } else if (route.name === 'Ajuestes') {
+                        iconName = 'cog';
                     }
 
                     return <Icon name={iconName} color={color} size={size} />;
@@ -32,7 +35,7 @@ const AdmincfpTabNavigator = () => {
                 tabBarLabelStyle: { fontWeight: 'bold' },
             })}
         >
-          
+
             <Tab.Screen
                 name="Prestamo"
                 component={PrestamoScreen}
@@ -46,7 +49,12 @@ const AdmincfpTabNavigator = () => {
             <Tab.Screen
                 name="EspaciosScreen"
                 component={EspaciosScreen}
-                options={{tabBarLabel: 'Espacios'}}
+                options={{ tabBarLabel: 'Espacios' }}
+            />
+            <Tab.Screen
+                name="Ajuestes"
+                component={Ajuestes}
+                options={{ tabBarLabel: 'Ajuestes' }}
             />
         </Tab.Navigator>
     );
