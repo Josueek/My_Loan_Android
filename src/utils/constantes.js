@@ -8,9 +8,9 @@
 
 //lennyn
 //export const IP =  'http://192.168.1.10/MyLoan-new/api';
-//export const IP = 'http://192.168.1.10';
+export const IP = 'http://192.168.1.10';
 //colegio lennyn
-export const IP = 'http://192.168.15.108';
+//export const IP = 'http://192.168.15.108';
 
 //Constante escuela
 //export const IP = 'http://10.10.2.144';

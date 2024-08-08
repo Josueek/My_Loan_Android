@@ -1,94 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import BackgroundImage from '../../../components/BackgroundImage';
 import InputShort from '../../../components/Inputs/InputShort';
-import ComboBox from '../../../components/Inputs/ComboBox';
 import InputNumer from '../../../components/Inputs/InputNumer';
 import DatePickerInput from '../../../components/Inputs/DatePicker';
 import Buttons from '../../../components/Buttons/Buttons';
-import fetchDataCursos from '../../../utils/fetchDataCursos'; // Asegúrate de que esta función sea importada
+import RNPickerSelect from 'react-native-picker-select'; // Importa la librería
+import fetchDataCursos from '../../../utils/fetchDataCursos';
 
 export default function CrearCursoScreen() {
     const [nombre, setNombre] = useState('');
-    const [fechaInicio, setFechaInicio] = useState('');
-    const [fechaFin, setFechaFin] = useState('');
+    const [fechaInicio, setFechaInicio] = useState();
+    const [fechaFin, setFechaFin] = useState();
     const [cantidadPersonas, setCantidadPersonas] = useState('');
     const [grupo, setGrupo] = useState('');
     const [programaFormacion, setProgramaFormacion] = useState('');
     const [codigoCurso, setCodigoCurso] = useState('');
     const [empleado, setEmpleado] = useState('');
     const [estado, setEstado] = useState('');
-    const [empleados, setEmpleados] = useState([]); // Para almacenar los empleados cargados
-    const [programas, setProgramas] = useState([]); // Para almacenar los programas
-    const [estados, setEstados] = useState([]); // Para almacenar los estados
+    const [empleados, setEmpleados] = useState([]);
+    const [programas, setProgramas] = useState([]);
+    const [estados, setEstados] = useState([]);
 
     const navigation = useNavigation();
 
-    // Función para cargar los empleados
-    const cargarEmpleados = async () => {
-        try {
-            const response = await fetchDataCursos('empleado_services', 'getEmpleados');
-            if (response.status === 1) {
-                // Filtrar los empleados según el cargo
-                const empleadosFiltrados = response.dataset.filter(emp => emp.cargo === 'Instructor');
-                setEmpleados(empleadosFiltrados);
-            } else {
-                console.error('Error al obtener empleados:', response.message);
-            }
-        } catch (error) {
-            console.error('Error al cargar empleados:', error);
-        }
-    };
-
-    // Función para cargar los programas de formación
-// Suponiendo que fetchDataCursos es una función que maneja las solicitudes
-const cargarPrograma = async () => {
-    try {
-        const response = await fetchDataCursos('curso_services', 'getProgramaFormacion');
-        if (response.status === 1) {
-            setProgramas(response.dataset.map(programa => ({
-                label: programa.Programa_formacion,
-                value: programa.Programa_formacion
-            })));
-        } else {
-            console.error('Error al obtener programas:', response.message);
-        }
-    } catch (error) {
-        console.error('Error al cargar programas:', error);
-    }
-};
-
-
-    // Función para cargar los estados del curso
-    const cargarEstado = async () => {
-        try {
-            const response = await fetchDataCursos('empleado_services', 'getCurso');
-            if (response.status === 1) {
-                setEstados(response.dataset.map(estado => ({
-                    label: estado.estado,
-                    value: estado.estado
-                })));
-            } else {
-                console.error('Error al obtener estados:', response.message);
-            }
-        } catch (error) {
-            console.error('Error al cargar estados:', error);
-        }
-    };
-
     useEffect(() => {
-        cargarEmpleados();
-        cargarPrograma();
-        cargarEstado();
+        const fetchData = async () => {
+            try {
+                const empleadosResponse = await fetchDataCursos('empleado_services', 'getEmpleados');
+                if (empleadosResponse.status === 1) {
+                    const empleadosFiltrados = empleadosResponse.dataset.filter(emp => emp.cargo === 'Instructor');
+                    setEmpleados(empleadosFiltrados);
+                } else {
+                    console.error('Error al obtener empleados:', empleadosResponse.message);
+                }
+
+                const programasResponse = await fetchDataCursos('curso_services', 'getProgramaFormacion');
+                if (programasResponse.status === 1) {
+                    setProgramas(programasResponse.dataset.map(programa => ({
+                        label: programa.Programa_formacion,
+                        value: programa.Programa_formacion
+                    })));
+                } else {
+                    console.error('Error al obtener programas:', programasResponse.message);
+                }
+
+                const estadosResponse = await fetchDataCursos('curso_services', 'getEstadoCurso');
+                if (estadosResponse.status === 1) {
+                    setEstados(estadosResponse.dataset.map(estado => ({
+                        label: estado.estado,
+                        value: estado.estado
+                    })));
+                } else {
+                    console.error('Error al obtener estados:', estadosResponse.message);
+                }
+            } catch (error) {
+                console.error('Error al cargar datos:', error);
+            }
+        };
+
+        fetchData();
     }, []);
 
-    const volver = () => {
-        navigation.navigate('AdmincfpTabNavigator');
-    };
-
-    const agregarCurso = async () => {
-        // Validación de campos vacíos
+    const handleAgregarCurso = async () => {
         if (!nombre || !fechaInicio || !fechaFin || !cantidadPersonas || !grupo || !programaFormacion || !codigoCurso || !empleado || !estado) {
             Alert.alert('Error', 'Por favor, completa todos los campos.');
             return;
@@ -122,20 +98,15 @@ const cargarPrograma = async () => {
     return (
         <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
-                <Image
-                    source={require('../../../../assets/myloanLogo.png')}
-                    style={styles.logo}
-                />
+                <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
                 <View style={styles.card}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                    <KeyboardAwareScrollView contentContainerStyle={styles.scrollViewContent}>
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Nombre del curso:</Text>
                                 <InputShort
                                     placeHolder="Ingresa el nombre"
                                     valor={nombre}
-                                    contra={false}
-                                    editable={true}
                                     setTextChange={setNombre}
                                     style={styles.input}
                                 />
@@ -144,7 +115,7 @@ const cargarPrograma = async () => {
                                 <Text>Grupo cursante:</Text>
                                 <InputNumer
                                     value={grupo}
-                                    onChange={(value) => setGrupo(value)}
+                                    onChange={setGrupo}
                                     placeholder="Número del grupo"
                                     style={styles.input}
                                 />
@@ -158,7 +129,6 @@ const cargarPrograma = async () => {
                                     placeHolder="Selecciona la fecha"
                                     valor={fechaInicio}
                                     setTextChange={setFechaInicio}
-                                    editable={true}
                                     style={styles.input}
                                 />
                             </View>
@@ -168,7 +138,6 @@ const cargarPrograma = async () => {
                                     placeHolder="Selecciona la fecha"
                                     valor={fechaFin}
                                     setTextChange={setFechaFin}
-                                    editable={true}
                                     style={styles.input}
                                 />
                             </View>
@@ -177,11 +146,11 @@ const cargarPrograma = async () => {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Programa de formación:</Text>
-                                <ComboBox
-                                    selectedValue={programaFormacion}
-                                    onValueChange={(value) => setProgramaFormacion(value)}
-                                    items={programas} // Aquí asignas los valores a ComboBox
-                                    placeholder="Programa"
+                                <RNPickerSelect
+                                    onValueChange={setProgramaFormacion}
+                                    items={programas}
+                                    placeholder={{ label: 'Selecciona un programa', value: null }}
+                                    style={pickerSelectStyles}
                                 />
                             </View>
                             <View style={styles.column}>
@@ -189,8 +158,6 @@ const cargarPrograma = async () => {
                                 <InputShort
                                     placeHolder="Código"
                                     valor={codigoCurso}
-                                    contra={false}
-                                    editable={true}
                                     setTextChange={setCodigoCurso}
                                     style={styles.input}
                                 />
@@ -200,21 +167,21 @@ const cargarPrograma = async () => {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Instructor asignado:</Text>
-                                <ComboBox
-                                    selectedValue={empleado}
-                                    onValueChange={(value) => setEmpleado(value)}
+                                <RNPickerSelect
+                                    onValueChange={setEmpleado}
                                     items={empleados.map(emp => ({
                                         label: `${emp.nombre_empleado} ${emp.apellido_empleado}`,
                                         value: emp.id_datos_empleado
                                     }))}
-                                    placeholder="Asignación de instructor"
+                                    placeholder={{ label: 'Selecciona un instructor', value: null }}
+                                    style={pickerSelectStyles}
                                 />
                             </View>
                             <View style={styles.column}>
                                 <Text>Cantidad de personas:</Text>
                                 <InputNumer
                                     value={cantidadPersonas}
-                                    onChange={(value) => setCantidadPersonas(value)}
+                                    onChange={setCantidadPersonas}
                                     placeholder="Número de personas"
                                     style={styles.input}
                                 />
@@ -224,29 +191,29 @@ const cargarPrograma = async () => {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Estado del curso:</Text>
-                                <ComboBox
-                                    selectedValue={estado}
-                                    onValueChange={(value) => setEstado(value)}
-                                    items={estados} // Aquí asignas los valores a ComboBox
-                                    placeholder="Estado"
+                                <RNPickerSelect
+                                    onValueChange={setEstado}
+                                    items={estados}
+                                    placeholder={{ label: 'Selecciona un estado', value: null }}
+                                    style={pickerSelectStyles}
                                 />
                             </View>
                         </View>
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
                 </View>
                 <View style={styles.row}>
                     <View style={styles.column}>
                         <Buttons
-                            color="Amarillo"
-                            textoBoton="Agregar"
-                            accionBoton={agregarCurso}
+                            color={"Amarillo"}
+                            textoBoton={'Agregar'}
+                            accionBoton={handleAgregarCurso}
                         />
                     </View>
                     <View style={styles.column}>
                         <Buttons
-                            textoBoton="Volver"
+                            textoBoton={'Volver'}
                             color="Gris"
-                            accionBoton={volver}
+                            accionBoton={() => navigation.navigate('AdmincfpTabNavigator')}
                         />
                     </View>
                 </View>
@@ -287,6 +254,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginLeft: 0,
     },
+    scrollViewContent: {
+        paddingBottom: 20,
+    },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -301,6 +271,25 @@ const styles = StyleSheet.create({
     },
     input: {
         marginTop: 5,
-    }
+    },
+    comboBox: {
+        marginTop: 5,
+    },
+});
 
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        backgroundColor: '#f8f8f8',
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        marginVertical: 5,
+    },
+    inputAndroid: {
+        backgroundColor: '#f8f8f8',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        marginVertical: 5,
+    },
 });
