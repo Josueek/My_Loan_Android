@@ -1,15 +1,12 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '../screens/Splash';
-//Importamos las pantallas a presentar, navegabilidad
 import LoginScreen from '../screens/LoginScreen';
-//Centro De formacion Profesional
 import InstructorcfpStack from './NavegationCFP/InstructorcfpStack';
 import AdmincfpStack from './NavegationCFP/AdmincfpStack';
-//Instituto Tecnico Ricaldone
 import InstructoritrStack from './NavegationITR/InstructoritrStack';
-//TabNavigacion de instructores
 import AdminTabNavigation from '../navegation/NavegationITR/AdminTabNavigation';
+import { Alert } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +16,16 @@ const NavStack = () => {
             <Stack.Screen
                 name="Splash"
                 component={SplashScreen}
-                options={{ headerShown: false }}
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+                listeners={({ navigation }) => ({
+                    beforeRemove: (e) => {
+                        // Bloquea la navegación hacia atrás desde esta pantalla
+                        e.preventDefault();
+                    },
+                })}
             />
             <Stack.Screen
                 name="Login"
@@ -29,22 +35,36 @@ const NavStack = () => {
             <Stack.Screen
                 name="InstructorcfpStack"
                 component={InstructorcfpStack}
-                options={{ headerShown: false }}
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
             />
             <Stack.Screen
                 name="AdmincfpStack"
                 component={AdmincfpStack}
-                options={{ headerShown: false }}
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+
             />
             <Stack.Screen
                 name="InstructoritrStack"
                 component={InstructoritrStack}
-                options={{ headerShown: false }} />
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+            />
             <Stack.Screen
                 name='AdminTabNavigation'
                 component={AdminTabNavigation}
-                options={{ headerShown: false }} />
-
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+            />
         </Stack.Navigator>
     );
 }
