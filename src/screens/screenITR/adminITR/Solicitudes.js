@@ -1,49 +1,87 @@
 // CursoDetalle.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
 //Componente para el fondo de pantalla
 import BackgroundImage from '../../../components/BackgroundImage';
-//Datos que se muestran en las tarjetas
-import Data from '../../../data/dataCFP/PrestamosCFP';
+import * as Constantes from '../../../utils/constantes';
+//Component card
+import PrestamosCard from '../../../components/Cards/PrestamosCard';
+
 //Pantalla que muestra los todos los prestamos 
 const PrestamoScreen = () => {
-    //Estilo de la carte renderizado
-    const renderItem = ({ item }) => {
-        return (
-            <View style={styles.cardContainer}>
-                <View style={styles.header}>
-                    <Text style={[styles.tipo, styles[`tipo${item.tipo}`]]}>{item.tipo}</Text>
-                    <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-                </View>
-                <Text style={styles.material}>{item.Material}</Text>
-                <Text style={styles.persona}>{item.persona}</Text>
-                <View style={styles.footer}>
-                    <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
-                    <Text style={styles.fecha}>{item.fecha}</Text>
-                </View>
-            </View>
-        );
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const ip = Constantes.IP;
+    //Hacemos la peticion en la api
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/prestamo_services.php?action=getAllCursos`);
+            const result = await response.json();
+            if (result.status === 1) {
+                const mappedData = result.dataset.map(item => ({
+                    //Asignamos los valores de respuesta
+                    id: item.id_prestamo,
+                    tipo: item.programa_formacion,
+                    estado: item.estado_prestamo,
+                    Material: item.observacion,
+                    persona: item.nombre_empleado,
+                    cantidad: item.nombre_curso,
+                    fecha: item.fecha_solicitud,
+                }));
+                setData(mappedData);
+            } else {
+                console.error('Unexpected data format:', result);
+            }
+            setLoading(false);
+            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+            setRefreshing(false);
+        }
     };
-   
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchData();
+    };
+
+    const renderItem = ({ item }) => (
+        <PrestamosCard item={item} />
+    );
+    //Mensaje de carga
+    if (loading) {
+        return (
+            <BackgroundImage background="AdminCFP">
+                <View style={styles.container}>
+                    <Text>Cargando...</Text>
+                </View>
+            </BackgroundImage>
+        );
+    }
 
     return (
         <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
                 <Image
                     source={require('../../../../assets/myloanLogo.png')}
-                    style={styles.logo} />
-
-                <Text style={styles.title}
-                //*Recreacion de la tarjeta*/
-                >Solicitudes recibidas por parte de Insaford</Text>
-                
+                    style={styles.logo}
+                />
+                <Text style={styles.title}>Solicitudes de préstamos recibidas por parte de Insaford</Text>
                 <View style={styles.flatListContainer}>
                     <FlatList
-                        data={Data}
-                        numColumns={1} // Número de columnas
+                        data={data}
+                        numColumns={1}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.id ? item.id.toString() : ''}
                         contentContainerStyle={styles.flatListContent}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                     />
                 </View>
             </View>

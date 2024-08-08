@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
 import * as Constantes from '../../../utils/constantes';
+//Component card
+import PrestamosCard from '../../../components/Cards/PrestamosCard';
 
 const PrestamoScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const ip = Constantes.IP;
+    const ip = Constantes.IP; 
 
     const fetchData = async () => {
         try {
@@ -46,18 +48,7 @@ const PrestamoScreen = () => {
     };
 
     const renderItem = ({ item }) => (
-        <View style={styles.cardContainer}>
-            <View style={styles.header}>
-                <Text style={[styles.tipo, styles[`tipo${item.tipo}`]]}>{item.tipo}</Text>
-                <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-            </View>
-            <Text style={styles.material}>{item.Material}</Text>
-            <Text style={styles.persona}>{item.persona}</Text>
-            <View style={styles.footer}>
-                <Text style={styles.cantidad}>Nombre curso: {item.cantidad}</Text>
-                <Text style={styles.fecha}>{item.fecha}</Text>
-            </View>
-        </View>
+        <PrestamosCard item={item} />
     );
 
     if (loading) {
@@ -77,9 +68,9 @@ const PrestamoScreen = () => {
                     source={require('../../../../assets/myloanLogo.png')}
                     style={styles.logo}
                 />
-                <Text style={styles.title}>Prestamos Realizados por el Ricaldone hacia Insaford</Text>
+                <Text style={styles.title}>Préstamos Realizados por el Ricaldone hacia Insaford</Text>
                 <View style={styles.flatListContainer}>
-                    <FlatList
+                <FlatList
                         data={data}
                         numColumns={1}
                         renderItem={renderItem}
