@@ -20,12 +20,7 @@ const NavStack = () => {
                     headerShown: false,
                     gestureEnabled: false,
                 }}
-                listeners={({ navigation }) => ({
-                    beforeRemove: (e) => {
-                        // Bloquea la navegación hacia atrás desde esta pantalla
-                        e.preventDefault();
-                    },
-                })}
+               
             />
             <Stack.Screen
                 name="Login"
