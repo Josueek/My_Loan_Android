@@ -1,51 +1,82 @@
-// src/screens/EspaciosITR.js
-import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-// Componente para definir el fondo
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl, ActivityIndicator, Dimensions } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
-// datos para crear las card
-import Data from '../../../data/dataCFP/EspaciosITR';
+import * as Constantes from '../../../utils/constantes';
+import CardComponent from '../../../components/Cards/EspacioCard';
 
+const { width: screenWidth } = Dimensions.get('window');
 
-const EspaciosITR = () => {
-    // Navegabilidad
-    const navigation = useNavigation();
-    // funciona para la accion del boton
-    const Observacion = () => {
-        navigation.navigate('ObservacionEspacio');
+const EspaciosScreen = () => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const ip = Constantes.IP;
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getAllEspacios`);
+            const result = await response.json();
+            if (result.status === 1) {
+                const mappedData = result.dataset.map(item => ({
+                    id: item.id_espacio,
+                    nombre: item.nombre_espacio,
+                    capacidad: item.capacidad_personas,
+                    tipo: item.tipo_espacio,
+                    inventario: item.inventario_doc,
+                    foto: item.foto_espacio,
+                    nombre_especialidad: item.nombre_especialidad,
+                    nombre_institucion: item.nombre_institucion,
+                    nombre_empleado: item.nombre_empleado,
+                }));
+                setData(mappedData);
+            } else {
+                console.error('Unexpected data format:', result);
+            }
+            setLoading(false);
+            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+            setRefreshing(false);
+        }
     };
-   
-    const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={Observacion}>
-            <View style={styles.card}>
-                <Image source={item.Imagen} style={styles.image} />
-                <View style={styles.cardContent}>
-                    <Text style={[styles.tipoEspacio, item.tipoEspacio === 'Taller' ? styles.taller : styles.laboratorio]}>
-                        {item.tipoEspacio}
-                    </Text>
-                    <Text style={styles.nombreEspacio}>{item.NombreEspacio}</Text>
-                    <View style={styles.row}>
-                        <Text style={item.Estado === 'Ocupado' ? styles.estadoOcupado : styles.estadoLibre}>
-                            {item.Estado}
-                        </Text>
-                        {item.Curso ? <Text style={styles.curso}>{item.Curso}</Text> : null}
-                    </View>
-                    <Text style={styles.instructor}>{item.Instructor}</Text>
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchData();
+    };
+
+    if (loading) {
+        return (
+            <BackgroundImage background="AdminCFP">
+                <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#0000ff" />
                 </View>
-            </View>
-        </TouchableOpacity>
-    );
+            </BackgroundImage>
+        );
+    }
 
     return (
-        <BackgroundImage background="EspaciosITR">
+        <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
-                <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
+                <Image
+                    source={require('../../../../assets/myloanLogo.png')}
+                    style={styles.logo}
+                />
+                <Text style={styles.title}>Espacios Disponibles</Text>
                 <FlatList
-                    data={Data}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={styles.list}
+                    data={data}
+                    numColumns={1}
+                    renderItem={({ item }) => <CardComponent item={item} />}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.flatListContent}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                 />
             </View>
         </BackgroundImage>
@@ -56,85 +87,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 30,
-    },
-    list: {
         alignItems: 'center',
     },
-    card: {
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-       
-        marginVertical: 10, 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
-        width: 380,
-        height: 150,
-    },
-    image: {
-        width: 150,
-        height: 150,
-    },
-    cardContent: {
-        padding: 20,
-        marginBottom: 50,
-        flex: 1,
-    },
-    tipoEspacio: {     
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontSize: 15,
-    },
-    taller: {
-        color: '#FFBD33',  
-    },
-    laboratorio: {
-        color: '#33A1FF', 
-    },
-    nombreEspacio: {
-        fontSize: 18,
-        color: '#000',
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 5,
-    },
-    estadoOcupado: {
-        fontSize: 14,
-        color: 'red',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    estadoLibre: {
-        fontSize: 14,
-        color: 'green',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    curso: {
-        fontSize: 12,
-        color: '#7c7c7c',
-    },
-    instructor: {
-        marginTop: 10,
-        fontSize: 12,
-        color: '#7c7c7c',
-        marginTop: 10,
+    flatListContent: {
+        paddingBottom: 20,
     },
     logo: {
         width: 125,
         height: 80,
         marginTop: 50,
         marginBottom: 30,
-        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: 23,
+        fontWeight: 'bold',
+        padding: 20,
+        textAlign: 'center',
     },
 });
 
-export default EspaciosITR;
+export default EspaciosScreen;

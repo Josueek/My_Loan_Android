@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Image, FlatList, RefreshControl, ActivityIndica
 import BackgroundImage from '../../../components/BackgroundImage';
 import * as Constantes from '../../../utils/constantes';
 import * as WebBrowser from 'expo-web-browser';
+import CardComponent from '../../../components/Cards/EspacioCard';
+
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -26,6 +28,9 @@ const EspaciosScreen = () => {
                     tipo: item.tipo_espacio,
                     inventario: item.inventario_doc,
                     foto: item.foto_espacio,
+                    nombre_especialidad: item.nombre_especialidad,
+                    nombre_institucion: item.nombre_institucion,
+                    nombre_empleado: item.nombre_empleado,
                 }));
                 setData(mappedData);
             } else {
@@ -49,27 +54,6 @@ const EspaciosScreen = () => {
         fetchData();
     };
 
-    const openPdf = (url) => {
-        WebBrowser.openBrowserAsync(url);
-    };
-
-    const renderItem = ({ item }) => (
-        <View style={styles.cardContainer}>
-            {item.foto && (
-                <Image source={{ uri: `${ip}/MyLoan-new/api/images/espacios/${item.foto}` }} style={styles.foto} />
-            )}
-            <View style={styles.textContainer}>
-                <Text style={styles.nombre}>{item.nombre}</Text>
-                <Text style={styles.capacidad}>Capacidad: {item.capacidad} personas</Text>
-                <Text style={styles.tipo}>Tipo: {item.tipo}</Text>
-                {item.inventario && (
-                    <TouchableOpacity onPress={() => openPdf(`${ip}/MyLoan-new/api/inventario/${item.inventario}`)}>
-                        <Text style={styles.inventario}>Ver Inventario</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
-        </View>
-    );
 
     if (loading) {
         return (
@@ -92,7 +76,7 @@ const EspaciosScreen = () => {
                 <FlatList
                     data={data}
                     numColumns={1}
-                    renderItem={renderItem}
+                    renderItem={({ item }) => <CardComponent item={item} />}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={styles.flatListContent}
                     refreshControl={
