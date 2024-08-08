@@ -1,9 +1,9 @@
 "# My_Loan_Android" 
 
 Librerias utilizadas
- npx expo install @react-navigation/native @react-navigation/stack @react-navigation/drawer
-npx expo install @react-native-async-storage/async-storage 
-npm install react-native-screens react-native-safe-area-context 
+* npx expo install @react-navigation/native @react-navigation/stack @react-navigation/drawer
+* npx expo install @react-native-async-storage/async-storage 
+* npm install react-native-screens react-native-safe-area-context 
 npm install @react-navigation/native 
 npm install @react-navigation/stack
 npm install @react-navigation/bottom-tabs
@@ -11,11 +11,11 @@ npm install @react-native-picker/picker
 
 Integrantes A2
 
-Josué Abdel Ortiz Deodanes
-Brandon Daniel Sanchez Santamaria
-Rebeca Patricia Monico Alfaro
-Lennyn Emmanuel Vides Perez
-Dylan Alexander Sanchez Cordoba
+* Josué Abdel Ortiz Deodanes
+* Brandon Daniel Sanchez Santamaria
+* Rebeca Patricia Monico Alfaro
+* Lennyn Emmanuel Vides Perez
+* Dylan Alexander Sanchez Cordoba
 
 
 
