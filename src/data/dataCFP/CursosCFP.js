@@ -1,4 +1,4 @@
-//Representacion de datos quedamos, para pressentar en la pantalla CursosScreen
+//Representacion de datos quedamos, para pressentar en la pantalla CursosScreen.
 const Data = [
     {
         id: '1',

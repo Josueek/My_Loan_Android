@@ -1,4 +1,4 @@
-//Representacion de datos quedamos, para pressentar en la pantalla PrestamoScreen
+//Representacion de datos quedamos, para pressentar en la pantalla PrestamoScreen.
 const Data = [
     {
         id: '1',
