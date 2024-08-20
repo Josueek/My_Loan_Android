@@ -4,11 +4,11 @@
  */
 
 //Josue
-//export const IP = 'http://192.168.1.94/MyLoan-new/api';
+export const IP = 'http://192.168.1.94';
 
 //lennyn
 //export const IP =  'http://192.168.1.10/MyLoan-new/api';
-export const IP = 'http://192.168.1.10';
+//export const IP = 'http://192.168.1.10';
 //colegio lennyn
 //export const IP = 'http://192.168.15.108';
 

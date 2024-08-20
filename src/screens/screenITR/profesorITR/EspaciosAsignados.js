@@ -1,50 +1,132 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// Componente para definir el fondo
 import BackgroundImage from '../../../components/BackgroundImage';
 import Buttons from '../../../components/Buttons/Buttons';
-// datos para crear las card
-import Data from '../../../data/dataCFP/EspaciosITR';
+import * as Constantes from '../../../utils/constantes';
+import CardComponent from '../../../components/Cards/EspacioCard';
+import { RefreshControl } from 'react-native-gesture-handler';
 
-const EspaciosAsignados = () => {
-    // Navegabilidad
-    const navigation = useNavigation();
+const EspaciosAsignados = ({ navigation }) => {
+    //Datos del usuario
+    const [userData, setUserData] = useState({
+        id_empleado: '',
+        nombre: '',
+        apellido: '',
+        especialidad: ''
+    });
+    const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const ip = Constantes.IP;
+    const [data, setData] = useState([]);
+
+    //Peticion para recibir los datos del empleado
+    const fetchUserData = async (userId) => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/miperfil_services.php?action=getProfile&id=${userId}`);
+            const result = await response.json();
+
+            if (result.status === 1) {
+                setUserData({
+                    id_datos_empleado: result.dataset.id_datos_empleado,
+                    nombre: result.dataset.nombre,
+                    apellido: result.dataset.apellido,
+                    especialidad: result.dataset.especialidad || 'Especialidad no asignada', // Valor predeterminado si es undefined
+                });
+                console.log('usuario id desde el fetch: ', result.dataset.id_datos_empleado);
+                fetchDataEspacios(result.dataset.id_datos_empleado); // Cargar los espacios después de obtener los datos del usuario
+            } else {
+                console.error('Unexpected data format:', result);
+                setError('Error al cargar datos');
+            }
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
+            setError('Error al cargar datos');
+            setLoading(false);
+        }
+    };
+
+    //Cargamos los datos del espacio acorde al Id del empleado
+    const fetchDataEspacios = async (userId) => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getAllEspaciosByIdUsuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idempleado: userId })
+            });
+
+            const result = await response.json();
+
+            // Verifica que el dataset anidado esté presente y sea un array
+            if (result.status === 1 && result.dataset && Array.isArray(result.dataset.dataset)) {
+                const mappedData = result.dataset.dataset.map(item => ({
+                    id: item.id_espacio,
+                    nombre: item.nombre_espacio,
+                    capacidad: item.capacidad_personas,
+                    tipo: item.tipo_espacio,
+                    inventario: item.inventario_doc,
+                    foto: item.foto_espacio,
+                    nombre_especialidad: item.nombre_especialidad,
+                    nombre_institucion: item.nombre_institucion,
+                    nombre_empleado: item.nombre_empleado,
+                }));
+                setData(mappedData);
+            } else {
+                console.error('Formato incorrecto:', result);
+                setError('Error al cargar datos');
+                setData([]); // Limpia los datos si hay un error
+            }
+            setLoading(false);
+            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            setError('Error al cargar datos');
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        const userId = 1; // Suponiendo que este es el ID del usuario autenticado
+        fetchUserData(userId); // Cargar los datos del usuario
+    }, []);
+
     // Accion del boton
-    const Observacion = () => {
+    const Observacion = (item) => {
         navigation.navigate('DatosEspacios');
     };
 
-    //Cerrar sesion
+    //Cerrar sesión
     const CerrarSession = () => {
         navigation.navigate('Login');
     };
 
-    // Filtrar los datos para que solo incluyan los registros con el ID específico
-    const filteredData = Data.filter(item => item.id === '2' || item.id === '4' || item.id === '1' || item.id === '3');
+    //Metodo para actualizar los datos
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchDataEspacios(userData.id_datos_empleado); // Usar el ID del usuario cargado
+    };
 
-    // Filtrar el instructor específico
-    const instructorData = Data.find(item => item.id === '2'); // Cambia '2' por el ID que necesitas
-
-    const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={Observacion}>
-            <View style={styles.card}>
-                <Image source={item.Imagen} style={styles.image} />
-                <View style={styles.cardContent}>
-                    <Text style={[styles.tipoEspacio, item.tipoEspacio === 'Taller' ? styles.taller : styles.laboratorio]}>
-                        {item.tipoEspacio}
-                    </Text>
-                    <Text style={styles.nombreEspacio}>{item.NombreEspacio}</Text>
-                    <View style={styles.row}>
-                        <Text style={item.Estado === 'Ocupado' ? styles.estadoOcupado : styles.estadoLibre}>
-                            {item.Estado}
-                        </Text>
-                        {item.Curso ? <Text style={styles.curso}>{item.Curso}</Text> : null}
-                    </View>
-                    <Text style={styles.instructor}>{item.Instructor}</Text>
+    //Condición para mostrar un icono cargando
+    if (loading) {
+        return (
+            <BackgroundImage background="InstructoritrScreen">
+                <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#0000ff" />
                 </View>
-            </View>
-        </TouchableOpacity>
+            </BackgroundImage>
+        );
+    }
+
+    //Texto a mostrar si no existen registros
+    const ListEmptyComponent = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aún no tienes espacios asignados</Text>
+        </View>
     );
 
     return (
@@ -54,22 +136,28 @@ const EspaciosAsignados = () => {
                     <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
                     <Image source={require('../../../../assets/LogoRicaldone.png')} style={styles.logoRical} />
                 </View>
-
-                {/* Mostrar el nombre del instructor específico */}
-                {instructorData && (
-                    <Text style={styles.instructorLog}>
-                        Instructor: {instructorData.Instructor}
-                    </Text>
-                )}
-
+                <View style={styles.Datos}>
+                    <Text style={styles.Nombre}>Instructor: {userData.nombre} {userData.apellido}</Text>
+                    <Text style={styles.Nombre}>Especialidad: {userData.especialidad}</Text>
+                </View>
                 <Text style={styles.title}>Listado de espacios asignados</Text>
                 <FlatList
-                    style={styles.lista}
-                    data={filteredData} // Pasa los datos filtrados aquí
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={styles.list}
+                    data={data}
+                    numColumns={1}
+                    renderItem={({ item }) =>
+                        <TouchableOpacity onPress={() => Observacion(item)}>
+                            <CardComponent item={item} />
+                        </TouchableOpacity>
+                    }
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.FlatListContent}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                    ListEmptyComponent={ListEmptyComponent}
                 />
+
+
                 <View style={styles.Cerrar}>
                     <Buttons
                         color={'Rojo'}
@@ -87,76 +175,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30,
         alignItems: 'center',
-        justifyContent: 'space-between', // Asegura que los elementos estén distribuidos
-    },
-    list: {
-        alignItems: 'center',
-    },
-    card: {
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginVertical: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
-        width: 380,
-        height: 150,
-    },
-    image: {
-        width: 150,
-        height: 150,
-    },
-    cardContent: {
-        padding: 20,
-        marginBottom: 20,
-        flex: 1,
-    },
-    tipoEspacio: {
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontSize: 15,
-    },
-    taller: {
-        color: '#FFBD33',
-    },
-    laboratorio: {
-        color: '#33A1FF',
-    },
-    nombreEspacio: {
-        fontSize: 18,
-        color: '#000',
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    row: {
-        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 5,
-    },
-    estadoOcupado: {
-        fontSize: 14,
-        color: 'red',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    estadoLibre: {
-        fontSize: 14,
-        color: 'green',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    curso: {
-        fontSize: 12,
-        color: '#7c7c7c',
-    },
-    instructor: {
-        marginTop: 10,
-        fontSize: 12,
-        color: '#7c7c7c',
     },
     logo: {
         width: 125,
@@ -167,7 +186,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 23,
         fontWeight: 'bold',
-        padding: 20,
+        padding: 30,
     },
     logoRical: {
         width: 100,
@@ -182,18 +201,23 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 20,
     },
-    instructorLog: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginVertical: 10,
-    },
-    lista: {
-        marginBottom: 40,
-    },
     Cerrar: {
         width: '100%',
         alignItems: 'center',
         marginBottom: 40,
+    },
+    Nombre: {
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    Datos: {
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    emptyText: {
+        fontWeight: '500',
+        fontSize: 15,
+        padding: 80,
     }
 });
 
