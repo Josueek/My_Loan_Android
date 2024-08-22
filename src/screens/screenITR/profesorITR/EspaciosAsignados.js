@@ -109,6 +109,7 @@ const EspaciosAsignados = ({ navigation }) => {
     const onRefresh = () => {
         setRefreshing(true);
         fetchDataEspacios(userData.id_datos_empleado); // Usar el ID del usuario cargado
+       
     };
 
     //Condición para mostrar un icono cargando

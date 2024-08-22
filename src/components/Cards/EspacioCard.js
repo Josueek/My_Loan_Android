@@ -66,7 +66,7 @@ const EspacioCard = ({ item }) => {
                         Institución: {item.nombre_institucion}
                     </Text>
                 )}
-                <Text style={styles.empleado}>Empleado: {item.nombre_empleado}</Text>
+                <Text style={styles.empleado}>Instructor asignado: {item.nombre_empleado}</Text>
                 {item.inventario && (
                     <TouchableOpacity onPress={() => openPdf(`${ip}/MyLoan-new/api/inventario/${item.inventario}`)}>
                         <Text style={styles.inventario}>Ver Inventario</Text>
