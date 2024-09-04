@@ -6,6 +6,7 @@ import Buttons from '../../../components/Buttons/Buttons';
 import * as Constantes from '../../../utils/constantes';
 import CardComponent from '../../../components/Cards/EspacioCard';
 import { RefreshControl } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EspaciosAsignados = ({ navigation }) => {
     //Datos del usuario
@@ -75,6 +76,7 @@ const EspaciosAsignados = ({ navigation }) => {
                     nombre_empleado: item.nombre_empleado,
                 }));
                 setData(mappedData);
+                // Imprime el id de cada espacio
             } else {
                 console.error('Formato incorrecto:', result);
                 setError('Error al cargar datos');
@@ -95,9 +97,19 @@ const EspaciosAsignados = ({ navigation }) => {
         fetchUserData(userId); // Cargar los datos del usuario
     }, []);
 
-    // Accion del boton
-    const Observacion = (item) => {
-        navigation.navigate('DatosEspacios');
+    // Guardamos el id del espacio selecccionado y nos dirigimos a la siguiete pantalla
+    const Observacion = async (item) => {
+        try {
+            //Se guarda en la libreia de AsyncStorage
+            await AsyncStorage.setItem('idEspacioSelect', item.id.toString());
+            //Se imprime para verificar el valor
+            console.log('Id del espacio:', item.id);
+            navigation.navigate('DatosEspacios');
+        } catch (error) {
+
+        }
+
+
     };
 
     //Cerrar sesión
@@ -109,7 +121,7 @@ const EspaciosAsignados = ({ navigation }) => {
     const onRefresh = () => {
         setRefreshing(true);
         fetchDataEspacios(userData.id_datos_empleado); // Usar el ID del usuario cargado
-       
+
     };
 
     //Condición para mostrar un icono cargando
