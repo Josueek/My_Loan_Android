@@ -9,6 +9,9 @@ import DatePickerInput from '../../../components/Inputs/DatePicker';
 import Buttons from '../../../components/Buttons/Buttons';
 import RNPickerSelect from 'react-native-picker-select'; // Importa la librería
 import fetchDataCursos from '../../../utils/fetchDataCursos';
+import fetchData from '../../../utils/fetchData';
+import * as constantes from '../../../utils/constantes';
+
 
 export default function CrearCursoScreen() {
     const [nombre, setNombre] = useState('');
@@ -64,26 +67,33 @@ export default function CrearCursoScreen() {
         fetchData();
     }, []);
 
-    const handleAgregarCurso = async () => {
+
+    const AgregarCurso = async () => {
         if (!nombre || !fechaInicio || !fechaFin || !cantidadPersonas || !grupo || !programaFormacion || !codigoCurso || !empleado || !estado) {
             Alert.alert('Error', 'Por favor, completa todos los campos.');
             return;
         }
-
+    
+        const dataToSend = {
+            nombre,
+            fechaInicio: fechaInicio.toISOString(),
+            fechaFin: fechaFin.toISOString(),
+            cantidadPersonas,
+            grupo,
+            programaFormacion,
+            codigoCurso,
+            empleado,
+            estado
+        };
+    
         try {
-            const response = await fetchDataCursos('curso_services', 'addCurso', JSON.stringify({
-                nombre,
-                fechaInicio,
-                fechaFin,
-                cantidadPersonas,
-                grupo,
-                programaFormacion,
-                codigoCurso,
-                empleado,
-                estado
-            }));
-
-            if (response.status === 1) {
+            const response = await fetchDataCursos('curso_services', 'addCurso', dataToSend);
+            console.log('Datos que se envían:', dataToSend);
+            console.log('URL final:', `${constantes.IP}/MyLoan-new/api/services/curso_services.php?action=addCurso`);
+    
+            if (response.error) {
+                Alert.alert('Error', response.message);
+            } else if (response.status === 1) {
                 Alert.alert('Éxito', response.message);
                 navigation.navigate('AdmincfpTabNavigator');
             } else {
@@ -94,6 +104,8 @@ export default function CrearCursoScreen() {
             Alert.alert('Error', 'Hubo un problema al agregar el curso.');
         }
     };
+    
+    
 
     return (
         <BackgroundImage background="AdminCFP">
@@ -206,7 +218,7 @@ export default function CrearCursoScreen() {
                         <Buttons
                             color={"Amarillo"}
                             textoBoton={'Agregar'}
-                            accionBoton={handleAgregarCurso}
+                            accionBoton={AgregarCurso}
                         />
                     </View>
                     <View style={styles.column}>

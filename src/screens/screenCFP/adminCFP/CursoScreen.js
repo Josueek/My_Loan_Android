@@ -98,7 +98,8 @@ const CursoScreen = () => {
         } catch (error) {
             console.error("Error al guardar el id del curso:", error);
         }
-    }
+    };
+    
 
     const ListEmptyComponent = () => (
         <View style={styles.emptyContainer}>
