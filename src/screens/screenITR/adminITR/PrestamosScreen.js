@@ -13,7 +13,7 @@ const PrestamoScreen = () => {
 
     const fetchData = async () => {
         try {
-            const response = await fetch(`${ip}/MyLoan-new/api/services/prestamo_services.php?action=getAllCursos`);
+            const response = await fetch(`${ip}/MyLoan-new/api/services/solicitud_services.php?action=getAllSolicitudITR`);
             const result = await response.json();
             if (result.status === 1) {
                 const mappedData = result.dataset.map(item => ({

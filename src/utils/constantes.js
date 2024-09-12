@@ -6,14 +6,12 @@
 //Josue
 //export const IP = 'http://192.168.1.94';
 
-//lennyn
-//export const IP =  'http://192.168.1.10/MyLoan-new/api';
 //export const IP = 'http://192.168.1.10';
 //colegio lennyn
-export const IP = 'http://192.168.129.108';
+//export const IP = 'http://192.168.129.108';
 //export const IP = 'http://192.168.137.125'
 //Constante escuela
-//export const IP = 'http://10.10.2.144';
+export const IP = 'http://10.10.4.230';
 
-export const IP = 'http://10.10.128.50';
+//export const IP = 'http://10.10.128.50';
 

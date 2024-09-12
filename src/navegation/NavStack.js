@@ -6,6 +6,7 @@ import InstructorcfpStack from './NavegationCFP/InstructorcfpStack';
 import AdmincfpStack from './NavegationCFP/AdmincfpStack';
 import InstructoritrStack from './NavegationITR/InstructoritrStack';
 import AdminTabNavigation from '../navegation/NavegationITR/AdminTabNavigation';
+import DetalleSolicitud from '../screens/screenITR/adminITR/DetalleSolicitud';
 import { Alert } from 'react-native';
 
 const Stack = createStackNavigator();
@@ -55,6 +56,14 @@ const NavStack = () => {
             <Stack.Screen
                 name='AdminTabNavigation'
                 component={AdminTabNavigation}
+                options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+            />
+             <Stack.Screen
+                name='DetalleSolicitud'
+                component={DetalleSolicitud}
                 options={{
                     headerShown: false,
                     gestureEnabled: false,
