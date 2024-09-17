@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
 import * as Constantes from '../../../utils/constantes';
 //Component card
 import PrestamosCard from '../../../components/Cards/PrestamosCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const PrestamoScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const ip = Constantes.IP; 
-
+    const ip = Constantes.IP;
+    const navigation = useNavigation();
+    
     const fetchData = async () => {
         try {
             const response = await fetch(`${ip}/MyLoan-new/api/services/solicitud_services.php?action=getAllSolicitudITR`);
@@ -47,8 +50,22 @@ const PrestamoScreen = () => {
         fetchData();
     };
 
+    const handlePress = async (id) => {
+        try {
+            await AsyncStorage.setItem('selectedId', id.toString());
+            console.log('ID guardado en AsyncStorage:', id);
+            // Aquí se redirige
+            navigation.navigate('DetalleSolicitud');
+
+        } catch (error) {
+            console.error('Error al guardar el ID en AsyncStorage:', error);
+        }
+    };
+
     const renderItem = ({ item }) => (
-        <PrestamosCard item={item} />
+        <TouchableOpacity onPress={() => handlePress(item.id)}>
+            <PrestamosCard item={item} />
+        </TouchableOpacity>
     );
 
     if (loading) {
@@ -70,7 +87,7 @@ const PrestamoScreen = () => {
                 />
                 <Text style={styles.title}>Préstamos Realizados por el Ricaldone hacia Insaford</Text>
                 <View style={styles.flatListContainer}>
-                <FlatList
+                    <FlatList
                         data={data}
                         numColumns={1}
                         renderItem={renderItem}

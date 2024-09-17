@@ -12,7 +12,7 @@ const PrestamoScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
     const ip = Constantes.IP;
     const navigation = useNavigation();
-
+ 
     const fetchData = async () => {
         try {
             const response = await fetch(`${ip}/MyLoan-new/api/services/solicitud_services.php?action=getAllSolicitudCFP`);
