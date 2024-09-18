@@ -25,6 +25,7 @@
     "react-native": "0.74.2",
     "react-native-file-viewer": "^2.1.5",
     "react-native-gesture-handler": "^2.18.1",
+    "react-native-image-picker": "^7.1.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-pdf": "^6.7.5",
     "react-native-picker-select": "^9.2.0",

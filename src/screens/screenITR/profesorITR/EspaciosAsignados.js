@@ -52,6 +52,7 @@ const EspaciosAsignados = ({ navigation }) => {
     //Cargamos los datos del espacio acorde al Id del empleado
     const fetchDataEspacios = async (userId) => {
         try {
+            console.log('Solicitando datos de espacios para el usuario ID:', userId);
             const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getAllEspaciosByIdUsuario`, {
                 method: 'POST',
                 headers: {
@@ -59,10 +60,10 @@ const EspaciosAsignados = ({ navigation }) => {
                 },
                 body: JSON.stringify({ idempleado: userId })
             });
-
+    
             const result = await response.json();
-
-            // Verifica que el dataset anidado esté presente y sea un array
+            console.log('Respuesta de la API:', result);  // Imprime toda la respuesta para depurar
+    
             if (result.status === 1 && result.dataset && Array.isArray(result.dataset.dataset)) {
                 const mappedData = result.dataset.dataset.map(item => ({
                     id: item.id_espacio,
@@ -76,7 +77,10 @@ const EspaciosAsignados = ({ navigation }) => {
                     nombre_empleado: item.nombre_empleado,
                 }));
                 setData(mappedData);
-                // Imprime el id de cada espacio
+            } else if (result.dataset && result.dataset.message === "No se encontraron registros") {
+                console.log(result.dataset.message);
+                setError('No se encontraron espacios asignados');
+                setData([]); // Limpia los datos si no hay registros
             } else {
                 console.error('Formato incorrecto:', result);
                 setError('Error al cargar datos');
@@ -91,6 +95,7 @@ const EspaciosAsignados = ({ navigation }) => {
             setRefreshing(false);
         }
     };
+    
 
     useEffect(() => {
         const userId = 1; // Suponiendo que este es el ID del usuario autenticado
