@@ -6,6 +6,8 @@ import AdmincfpTabNavigator from '../NavegationCFP/AdmincfpTabNavigator';
 import CrearCursosScreen from '../../screens/screenCFP/adminCFP/CrearCursoScreen';
 import EditarCurso from '../../screens/screenCFP/adminCFP/EditarCurso';
 import ObservacionEspacio from '../../screens/screenCFP/adminCFP/ObservacionEspacio';
+import DetallePrestamo from '../../screens/screenCFP/adminCFP/DetallePrestamo';
+
 const Stack = createStackNavigator();
 
 const InstructorcfpStack = () => {
@@ -27,6 +29,10 @@ const InstructorcfpStack = () => {
             <Stack.Screen
                 name="EditarCurso"
                 component={EditarCurso}
+                options={{ headerShown: false }} />
+            <Stack.Screen
+                name="DetallePrestamo"
+                component={DetallePrestamo}
                 options={{ headerShown: false }} />
         </Stack.Navigator>
     );

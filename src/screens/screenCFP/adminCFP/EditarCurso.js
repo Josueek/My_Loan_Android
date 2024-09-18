@@ -1,42 +1,75 @@
-// src/screens/SplashScreen.js
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { StyleSheet, Text, View, Image, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//Estilo para el fondo
 import BackgroundImage from '../../../components/BackgroundImage';
-//Input para los campos
-import InputMultiline from '../../../components/Inputs/InputMultiline';
 import InputShort from '../../../components/Inputs/InputShort';
-import ComboBox from '../../../components/Inputs/ComboBox';
-import InputNumer from '../../../components/Inputs/InputNumer';
-//Boton
 import Buttons from '../../../components/Buttons/Buttons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Constantes from '../../../utils/constantes';
 // Componente para editar cursos
 export default function EditarCurso() {
-    const [curso, setCurso] = useState('Curso de enca'); // Estado para el nombre del curso
-    // Datos para llenar los combobox
-    const items = [
-        { label: 'Option 1', value: '1' },
-        { label: 'Option 2', value: '2' },
-        { label: 'Option 3', value: '3' },
-    ];
-    //
-    const [text, setText] = useState(''); // Estado para texto genérico
-    const [selectedValue, setSelectedValue] = useState(''); // Estado para el valor seleccionado en ComboBox
-    const [number, setNumber] = useState(''); // Estado para valores numéricos
-    // Navegación, volver a la pestaña anterior
+    const ip = Constantes.IP;
+    const [curso, setCurso] = useState('');
+    const [Grupo, setGrupo] = useState('');
+    const [inicio, setInicio] = useState('');
+    const [fin, setFin] = useState('');
+    const [programa, setPrograma] = useState('');
+    const [cantidad, setCantidad] = useState('');
+    const [estado, setEstado] = useState('');
+    const [instructor, setInstructor] = useState('');
+    const [apellidoInstructor, setApellidoInstructor] = useState('');
+    const [telefonoInstructor, setTelefonoInstructor] = useState('');
+    const [estadoInstructor, setEstadoInstructor] = useState('');
+    const [especialidadInstructor, setEspecialidadInstructor] = useState('');
+
+    const fetchData = async () => {
+        try {
+            const id = await AsyncStorage.getItem('id_curso');
+            if (!id) {
+                Alert.alert('Error', "No se encontró el curso.");
+                return;
+            }
+
+            const response = await fetch(`${ip}/MyLoan-new/api/services/curso_services.php?action=getCursoCompleto&id=${id}`);
+            const result = await response.json();
+
+            if (result.status === 1) {
+                const data = result.dataset;
+                setCurso(data.nombre_curso);
+                setGrupo(data.grupo);
+                setInicio(data.fecha_inicio);
+                setFin(data.fecha_fin);
+                setPrograma(data.programa_formacion);
+                setCantidad(data.cantidad_personas);
+                setEstado(data.estado);
+                setInstructor(data.nombre_empleado);
+                setApellidoInstructor(data.apellido_empleado);
+                setTelefonoInstructor(data.telefono);
+                setEstadoInstructor(data.estado_empleado);
+                setEspecialidadInstructor(data.nombre_especialidad);
+                console.log(data);
+            } else {
+                Alert.alert('Error', result.message || 'Error al obtener los datos del curso');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const navigation = useNavigation();
     const Volver = () => {
         navigation.navigate('AdmincfpTabNavigator');
-    }
-    /* Componente de fondo personalizado */ 
+    };
+
     return (
         <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
                 <Image
-                    source={require('../../../../assets/myloanLogo.png')} // Ruta del logo
+                    source={require('../../../../assets/myloanLogo.png')}
                     style={styles.logo}
                 />
                 <View style={styles.card}>
@@ -45,20 +78,20 @@ export default function EditarCurso() {
                             <View style={styles.column}>
                                 <Text>Nombre del curso:</Text>
                                 <InputShort
-                                    placeHolder="Ingresa el nombre"
-                                    valor={curso}
-                                    contra={false}
-                                    editable={true}
+                                    placeHolder="Nombre"
+                                    Valor={curso}
+                                    editable={false}
                                     setTextChange={setCurso}
                                     style={styles.input}
                                 />
                             </View>
                             <View style={styles.column}>
                                 <Text>Grupo cursante:</Text>
-                                <InputNumer
-                                    value={number}
-                                    onChange={(value) => setNumber(value)}
-                                    placeholder="Número del grupo"
+                                <InputShort
+                                    placeHolder="Grupo"
+                                    Valor={Grupo}
+                                    editable={false}
+                                    setTextChange={setGrupo}
                                     style={styles.input}
                                 />
                             </View>
@@ -68,22 +101,20 @@ export default function EditarCurso() {
                             <View style={styles.column}>
                                 <Text>Fecha de inicio:</Text>
                                 <InputShort
-                                    placeHolder="19/04/2024"
-                                    valor={curso}
-                                    contra={false}
-                                    editable={true}
-                                    setTextChange={setCurso}
+                                    placeHolder="DD/MM/AAAA"
+                                    Valor={inicio}
+                                    editable={false}
+                                    setTextChange={setInicio}
                                     style={styles.input}
                                 />
                             </View>
                             <View style={styles.column}>
                                 <Text>Fecha de finalización:</Text>
                                 <InputShort
-                                    placeHolder="20/04/2024"
-                                    valor={curso}
-                                    contra={false}
-                                    editable={true}
-                                    setTextChange={setCurso}
+                                    placeHolder="DD/MM/AAAA"
+                                    Valor={fin}
+                                    editable={false}
+                                    setTextChange={setFin}
                                     style={styles.input}
                                 />
                             </View>
@@ -92,42 +123,21 @@ export default function EditarCurso() {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Programa de formación:</Text>
-                                <ComboBox
-                                    selectedValue={selectedValue}
-                                    onValueChange={(value) => setSelectedValue(value)}
-                                    items={items}
-                                    placeholder="Programa"
-                                />
-                            </View>
-                            <View style={styles.column}>
-                                <Text>Duración del curso:</Text>
                                 <InputShort
-                                    placeHolder="00 horas, días"
-                                    valor={curso}
-                                    contra={false}
-                                    editable={true}
-                                    setTextChange={setCurso}
+                                    placeHolder="Programa"
+                                    Valor={programa}
+                                    editable={false}
+                                    setTextChange={setPrograma}
                                     style={styles.input}
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.row}>
-                            <View style={styles.column}>
-                                <Text>Instructor asignado:</Text>
-                                <ComboBox
-                                    selectedValue={selectedValue}
-                                    onValueChange={(value) => setSelectedValue(value)}
-                                    items={items}
-                                    placeholder="Asignación de instructor"
                                 />
                             </View>
                             <View style={styles.column}>
                                 <Text>Cantidad de personas:</Text>
-                                <InputNumer
-                                    value={number}
-                                    onChange={(value) => setNumber(value)}
-                                    placeholder="Número de personas"
+                                <InputShort
+                                    placeHolder="Cantidad"
+                                    Valor={cantidad}
+                                    editable={false}
+                                    setTextChange={setCantidad}
                                     style={styles.input}
                                 />
                             </View>
@@ -135,57 +145,80 @@ export default function EditarCurso() {
 
                         <View style={styles.row}>
                             <View style={styles.column}>
-                                <Text>Estado del curso:</Text>
-                                <ComboBox
-                                    selectedValue={selectedValue}
-                                    onValueChange={(value) => setSelectedValue(value)}
-                                    items={items}
-                                    placeholder="Estado"
+                                <Text>Instructor:</Text>
+                                <InputShort
+                                    placeHolder="Nombre"
+                                    Valor={instructor}
+                                    editable={false}
+                                    setTextChange={setInstructor}
+                                    style={styles.input}
+                                />
+                            </View>
+                            <View style={styles.column}>
+                                <Text>Apellido:</Text>
+                                <InputShort
+                                    placeHolder="Apellido"
+                                    Valor={apellidoInstructor}
+                                    editable={false}
+                                    setTextChange={setApellidoInstructor}
+                                    style={styles.input}
                                 />
                             </View>
                         </View>
 
-                        <Text>Observaciones del curso:</Text>
-                        <InputMultiline
-                            placeHolder="Ingresa algún comentario o observación"
-                            valor={text}
-                            contra={false}
-                            editable={true}
-                            setTextChange={setText}
-                            style={styles.inputM}
-                            multiline={true}
-                        />
+                        <View style={styles.row}>
+                            <View style={styles.column}>
+                                <Text>Teléfono:</Text>
+                                <InputShort
+                                    placeHolder="Teléfono"
+                                    Valor={telefonoInstructor}
+                                    editable={false}
+                                    setTextChange={setTelefonoInstructor}
+                                    style={styles.input}
+                                />
+                            </View>
+                            <View style={styles.column}>
+                                <Text>Estado:</Text>
+                                <InputShort
+                                    placeHolder="Estado"
+                                    Valor={estadoInstructor}
+                                    editable={false}
+                                    setTextChange={setEstadoInstructor}
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.row}>
+                            <View style={styles.column}>
+                                <Text>Especialidad:</Text>
+                                <InputShort
+                                    placeHolder="Especialidad"
+                                    Valor={especialidadInstructor}
+                                    editable={false}
+                                    setTextChange={setEspecialidadInstructor}
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
                     </ScrollView>
                 </View>
-                <View style={styles.row}>
-                    <View style={styles.column}>
-                        <Buttons
-                            color={"Amarillo"}
-                            textoBoton={'Editar'}
-                        />
-                    </View>
-                    <View style={styles.column}>
-                        <Buttons
-                            textoBoton={'Volver'}
-                            color="Gris"
-                            accionBoton={Volver}
-                        />
-                    </View>
-                </View>
+
+                <Buttons
+                    textoBoton={'Volver'}
+                    color="Gris"
+                    accionBoton={Volver}
+                />
             </View>
         </BackgroundImage>
     );
 }
 
-// Estilos del componente
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-    },
-    title: {
-        fontSize: 20,
-        textAlign: 'center',
     },
     logo: {
         width: 125,
@@ -193,7 +226,6 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginLeft: 20,
         marginBottom: 20,
-        justifyContent: 'space-between',
     },
     card: {
         paddingHorizontal: 10,
@@ -208,7 +240,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '65%',
         marginBottom: 10,
-        marginLeft: 0,
     },
     row: {
         flexDirection: 'row',
@@ -220,6 +251,6 @@ const styles = StyleSheet.create({
         paddingLeft: 0,
         marginLeft: 5,
         marginRight: 10,
-        marginTop: 10, // Ajusta este valor para aumentar el espacio entre las columnas
+        marginTop: 10,
     },
 });

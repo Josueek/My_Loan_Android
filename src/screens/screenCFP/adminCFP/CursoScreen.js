@@ -55,10 +55,6 @@ const CursoScreen = () => {
         }
     };
 
-    const AgregarCurso = () => {
-        navigation.navigate('CrearCursosScreen');
-    }
-
     const EliminarCurso = (curso) => {
         Alert.alert(
             "Confirmación",
@@ -140,11 +136,6 @@ const CursoScreen = () => {
                         ListEmptyComponent={ListEmptyComponent}
                     />
                 </View>
-                <Button
-                    textoBoton={'Agregar'}
-                    color={"Amarillo"}
-                    accionBoton={AgregarCurso}
-                />
             </View>
         </BackgroundImage>
     );
