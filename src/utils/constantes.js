@@ -4,10 +4,11 @@
  */
 
 //Josue
-export const IP = 'http://192.168.1.94';
+//export const IP = 'http://192.168.0.12';
 
 //export const IP = 'http://192.168.1.10';
 //colegio lennyn
+export const IP = 'http://192.168.145.108';
 //export const IP = 'http://192.168.129.108';
 //export const IP = 'http://192.168.137.125'
 //Constante escuela
