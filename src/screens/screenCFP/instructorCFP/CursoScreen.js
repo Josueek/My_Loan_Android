@@ -22,7 +22,7 @@ const CursoScreen = () => {
 
         try {
             // Actualizar la URL de la API
-            const response = await fetch('http://10.10.2.143/myloan-new/api/services/curso_services.php?action=getAllCursos&buscar=', {
+            const response = await fetch('http://192.168.0.12/myloan-new/api/services/curso_services.php?action=getAllCursos&buscar=', {
                 method: 'GET',
             });
 
@@ -61,7 +61,10 @@ const CursoScreen = () => {
         return (
             <TouchableOpacity
                 style={styles.cardContainer}
-                onPress={() => navigation.navigate('CursoDetalles', { item })}
+onPress={() => {
+    navigation.navigate('CursoDetalles', { id_curso: item.id });
+}}
+                
             >
                 <View style={styles.header}>
                     <Text style={[styles.estado, styles[`estado${item.estado.replace(' ', '').toUpperCase()}`]]}>{item.estado}</Text>

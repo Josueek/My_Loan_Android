@@ -4,7 +4,7 @@
  */
 
 //Josue
-export const IP = 'http://192.168.1.94';
+export const IP = 'http://192.168.0.12';
 
 //export const IP = 'http://192.168.1.10';
 //colegio lennyn
