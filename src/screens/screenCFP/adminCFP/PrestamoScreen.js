@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import BackgroundImage from '../../../components/BackgroundImage';
 import * as Constantes from '../../../utils/constantes';
+//Component card
+import PrestamosCard from '../../../components/Cards/PrestamosCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const PrestamoScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const ip = Constantes.IP;
+    const navigation = useNavigation();
 
+    //Consulta para obtener los prestamos
     const fetchData = async () => {
         try {
-            const response = await fetch(`${ip}/MyLoan-new/api/services/prestamo_services.php?action=getAllCursos`);
+            const response = await fetch(`${ip}/MyLoan-new/api/services/solicitud_services.php?action=getAllSolicitudCFP`);
             const result = await response.json();
             if (result.status === 1) {
                 const mappedData = result.dataset.map(item => ({
@@ -44,22 +50,25 @@ const PrestamoScreen = () => {
         setRefreshing(true);
         fetchData();
     };
+    //Const pra guardar el id del prestamo
+    const handlePress = async (id) => {
+        try {
+            await AsyncStorage.setItem('selectedId', id.toString());
+            //Se redirige a otra pantalla para mostrar los detalles
+            navigation.navigate('DetallePrestamo');
+        } catch (error) {
+            console.log('Error al guardar el ID: ', error);
+        }
+    }
 
+    //Se redenderiza cada card
     const renderItem = ({ item }) => (
-        <View style={styles.cardContainer}>
-            <View style={styles.header}>
-                <Text style={[styles.tipo, styles[`tipo${item.tipo}`]]}>{item.tipo}</Text>
-                <Text style={[styles.estado, styles[`estado${item.estado}`]]}>{item.estado}</Text>
-            </View>
-            <Text style={styles.material}>{item.Material}</Text>
-            <Text style={styles.persona}>{item.persona}</Text>
-            <View style={styles.footer}>
-                <Text style={styles.cantidad}>Nombre curso: {item.cantidad}</Text>
-                <Text style={styles.fecha}>{item.fecha}</Text>
-            </View>
-        </View>
+        <TouchableOpacity onPress={() => handlePress(item.id)}>
+            <PrestamosCard item={item} />
+        </TouchableOpacity>
     );
 
+    //Texto de carga
     if (loading) {
         return (
             <BackgroundImage background="AdminCFP">
@@ -77,13 +86,13 @@ const PrestamoScreen = () => {
                     source={require('../../../../assets/myloanLogo.png')}
                     style={styles.logo}
                 />
-                <Text style={styles.title}>Prestamos Realizados por el Ricaldone hacia Insaford</Text>
+                <Text style={styles.title}>Préstamos Realizados por el Ricaldone hacia Insaford</Text>
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={data}
                         numColumns={1}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item.id ? item.id.toString() : ''}
                         contentContainerStyle={styles.flatListContent}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

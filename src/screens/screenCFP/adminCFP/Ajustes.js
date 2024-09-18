@@ -8,14 +8,15 @@ import TextInput from '../../../components/Inputs/TextInput';
 
 const { width, height } = Dimensions.get('window');
 
-const SettingsScreen = ({ navigation }) => {
+const Ajustes = ({ navigation }) => {
     const [userData, setUserData] = useState({
         nombre: '',
         apellido: '',
         telefono: '',
         estado: '',
         foto: '',
-        especialidad: ''
+        cargo: '',
+        especialidad: '',
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,7 +33,8 @@ const SettingsScreen = ({ navigation }) => {
                     telefono: result.dataset.telefono,
                     estado: result.dataset.estado,
                     foto: result.dataset.imagen,
-                    especialidad: result.dataset.cargo || '', // Valor predeterminado si es undefined
+                    especialidad: result.dataset.especialidad,
+                    cargo: result.dataset.cargo || '', // Valor predeterminado si es undefined
                 });
             } else {
                 console.error('Unexpected data format:', result);
@@ -149,7 +151,7 @@ const SettingsScreen = ({ navigation }) => {
                         <Text style={styles.label}>Cargo</Text>
                         <TextInput
                             placeHolder={"Cargo desempeñado"}
-                            Valor={userData.especialidad ? userData.especialidad.toString() : ''}
+                            Valor={userData.cargo ? userData.cargo.toString() : ''}
                             editable={false}
                         />
                     </View>
@@ -229,4 +231,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SettingsScreen;
+export default Ajustes;
