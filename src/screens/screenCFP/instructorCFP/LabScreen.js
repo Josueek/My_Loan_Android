@@ -1,39 +1,46 @@
-// src/screens/EspaciosITR.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// Componente para definir el fondo
+import axios from 'axios';
 import BackgroundImage from '../../../components/BackgroundImage';
-// datos para crear las card
-import Data from '../../../data/dataCFP/EspaciosITR';
 
 const LabEspaciosITR = () => {
-    // Navegabilidad
+    const [espacios, setEspacios] = useState([]);
     const navigation = useNavigation();
-    // Accion del boton
-    const Observacion = () => {
+
+    useEffect(() => {
+        // Fetch data from API
+        axios.get('http://192.168.0.12/myloan-new/api/services/espacios_services.php?action=getAllEspacios')
+            .then(response => {
+                if (response.data.status === 1) {
+                    setEspacios(response.data.dataset); // Update state with fetched data
+                } else {
+                    console.error('Failed to fetch data:', response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
+
+    const handlePress = (id) => {
+        // Save the selected ID to local storage
+        localStorage.setItem('selectedEspacioId', id);
         navigation.navigate('LabDetalles');
     };
 
-    // Filtrar los datos para que solo incluyan los registros con el ID específico
-    const filteredData = Data.filter(item => item.id === '2' || item.id === '4'); // Cambia '1' y '4' por los IDs que necesitas
-
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={Observacion}>
+        <TouchableOpacity onPress={() => handlePress(item.id_espacio)}>
             <View style={styles.card}>
-                <Image source={item.Imagen} style={styles.image} />
+                <Image source={{ uri: `http://192.168.0.12/myloan-new/api/images/espacios/${item.foto_espacio}` }} style={styles.image} />
                 <View style={styles.cardContent}>
-                    <Text style={[styles.tipoEspacio, item.tipoEspacio === 'Taller' ? styles.taller : styles.laboratorio]}>
-                        {item.tipoEspacio}
+                    <Text style={[styles.tipoEspacio, item.tipo_espacio === 'Taller' ? styles.taller : styles.laboratorio]}>
+                        {item.tipo_espacio}
                     </Text>
-                    <Text style={styles.nombreEspacio}>{item.NombreEspacio}</Text>
-                    <View style={styles.row}>
-                        <Text style={item.Estado === 'Ocupado' ? styles.estadoOcupado : styles.estadoLibre}>
-                            {item.Estado}
-                        </Text>
-                        {item.Curso ? <Text style={styles.curso}>{item.Curso}</Text> : null}
-                    </View>
-                    <Text style={styles.instructor}>{item.Instructor}</Text>
+                    <Text style={styles.nombreEspacio}>{item.nombre_espacio}</Text>
+                    <Text style={styles.capacidad}>Capacidad: {item.capacidad_personas} personas</Text>
+                    <Text style={styles.instructor}>Especialidad: {item.id_especialidad}</Text>
+                    <Text style={styles.instructor}>Empleado: {item.id_empleado}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -45,9 +52,9 @@ const LabEspaciosITR = () => {
                 <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
                 <Text style={styles.title}>Listado de espacios asignados</Text>
                 <FlatList
-                    data={filteredData} // Pasa los datos filtrados aquí
+                    data={espacios}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id_espacio.toString()}
                     contentContainerStyle={styles.list}
                 />
             </View>
@@ -103,6 +110,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 10,
     },
+    capacidad: {
+        fontSize: 14,
+        color: '#7c7c7c',
+    },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -141,7 +152,6 @@ const styles = StyleSheet.create({
         fontSize: 23,
         fontWeight: 'bold',
         padding: 20,
-         
         alignItems: 'center',
     },
 });

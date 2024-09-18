@@ -5,18 +5,23 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import PrestamosScreen from '../../screens/screenITR/adminITR/PrestamosScreen';
-
+import AdminTabNavigation from '../../navegation/NavegationITR/AdminTabNavigation'
 // Creamos una instancia del Stack Navigator.
 const Stack = createStackNavigator();
 
 // Definimos el componente InstructoritrStack que representará el stack de navegación.
 const AdminitrStack = () => {
     return (
-       
+
         <Stack.Navigator initialRouteName='PrestamosScreen'>
             <Stack.Screen
                 name="PrestamosScreen"
                 component={PrestamosScreen}
+                options={{ headerShown: false }} // Oculta el encabezado (header) de la pantalla.
+            />
+            <Stack.Screen
+                name="AdminTabNavigation"
+                component={AdminTabNavigation}
                 options={{ headerShown: false }} // Oculta el encabezado (header) de la pantalla.
             />
         </Stack.Navigator>

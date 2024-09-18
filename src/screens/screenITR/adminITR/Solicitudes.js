@@ -1,26 +1,24 @@
-// CursoDetalle.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
-//Componente para el fondo de pantalla
+import { View, Text, StyleSheet, Image, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importa AsyncStorage
 import BackgroundImage from '../../../components/BackgroundImage';
 import * as Constantes from '../../../utils/constantes';
-//Component card
 import PrestamosCard from '../../../components/Cards/PrestamosCard';
+import { useNavigation } from '@react-navigation/native';
 
-//Pantalla que muestra los todos los prestamos 
 const PrestamoScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const ip = Constantes.IP;
-    //Hacemos la peticion en la api
+    const navigation = useNavigation();
+ 
     const fetchData = async () => {
         try {
-            const response = await fetch(`${ip}/MyLoan-new/api/services/prestamo_services.php?action=getAllCursos`);
+            const response = await fetch(`${ip}/MyLoan-new/api/services/solicitud_services.php?action=getAllSolicitudCFP`);
             const result = await response.json();
             if (result.status === 1) {
                 const mappedData = result.dataset.map(item => ({
-                    //Asignamos los valores de respuesta
                     id: item.id_prestamo,
                     tipo: item.programa_formacion,
                     estado: item.estado_prestamo,
@@ -41,6 +39,7 @@ const PrestamoScreen = () => {
             setRefreshing(false);
         }
     };
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -50,10 +49,24 @@ const PrestamoScreen = () => {
         fetchData();
     };
 
+    const handlePress = async (id) => {
+        try {
+            await AsyncStorage.setItem('selectedId', id.toString());
+            console.log('ID guardado en AsyncStorage:', id);
+            // Aquí se redirige
+            navigation.navigate('DetalleSolicitud');
+
+        } catch (error) {
+            console.error('Error al guardar el ID en AsyncStorage:', error);
+        }
+    };
+
     const renderItem = ({ item }) => (
-        <PrestamosCard item={item} />
+        <TouchableOpacity onPress={() => handlePress(item.id)}>
+            <PrestamosCard item={item} />
+        </TouchableOpacity>
     );
-    //Mensaje de carga
+
     if (loading) {
         return (
             <BackgroundImage background="AdminCFP">
@@ -165,14 +178,16 @@ const styles = StyleSheet.create({
     },
     estadoEnEspera: {
         color: '#f1c40f',
-    }, logo: {
+    }, 
+    logo: {
         width: 125,
         height: 80,
         marginTop: 50,
         marginLeft: 30,
         marginBottom: 30,
         justifyContent: 'space-between',
-    }, title: {
+    }, 
+    title: {
         fontSize: 23,
         fontWeight: 'bold',
         padding: 20,

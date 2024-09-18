@@ -38,10 +38,11 @@ const CardComponent = ({ item }) => {
                 <Text style={[styles.tipo, getTipoStyle(item.tipo)]}>{item.tipo}</Text>
                 <Text style={[styles.estado, getEstadoStyle(item.estado)]}>{item.estado}</Text>
             </View>
-            <Text style={styles.material}>{item.Material}</Text>
+            <Text style={styles.material}>Curso: {item.cantidad}</Text>
+
             <Text style={styles.persona}>{item.persona}</Text>
             <View style={styles.footer}>
-                <Text style={styles.cantidad}>Nombre curso: {item.cantidad}</Text>
+                <Text style={styles.cantidad}>{item.Material}</Text>
                 <Text style={styles.fecha}>{item.fecha}</Text>
             </View>
         </View>
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         width: 350,
-        height: 150,
+        height: 175,
         marginBottom: 30,
     },
     header: {
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     cantidad: {
         fontSize: 14,
         color: '#666',
+        width: '75%',
     },
     fecha: {
         fontSize: 14,
