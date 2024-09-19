@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, Image, ScrollView, TextInput as RNTextInput } from 'react-native';
+import { StyleSheet, Text, View, Alert, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundImage from '../../../components/BackgroundImage';
 import ButtonDown from '../../../components/Buttons/ButtonDonw';
 import Buttons from '../../../components/Buttons/Buttons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Constantes from '../../../utils/constantes';
+import TextInput from '../../../components/Inputs/TextInput';
+import InputShort from '../../../components/Inputs/InputShort';
+import * as WebBrowser from 'expo-web-browser';
 
 const DatosEspacio = () => {
     const navigation = useNavigation();
@@ -13,11 +16,16 @@ const DatosEspacio = () => {
 
     const [nombre, setNombre] = useState('');
     const [encargado, setEncargado] = useState('');
+    const [apellidoEncargado, setApellidoEncargado] = useState('');
     const [capacidad, setCapacidad] = useState('');
     const [tipoEspacio, setTipoEspacio] = useState('');
     const [grupo, setGrupo] = useState('');
     const [especialidad, setEspecialidad] = useState('');
     const [foto, setFoto] = useState('');
+    const [telefonoEmpleado, setTelefonoEmpleado] = useState('');
+    const [estadoEmpleado, setEstadoEmpleado] = useState('');
+    const [fotoEmpleado, setFotoEmpleado] = useState('');
+    const [inventario_doc, setinventario_doc] = useState('');
 
     useEffect(() => {
         const cargarEspacio = async () => {
@@ -33,13 +41,13 @@ const DatosEspacio = () => {
                 console.error('Error al cargar el ID del espacio: ', error);
                 Alert.alert('Error', 'Error al cargar el ID del espacio.');
             }
-        };        
+        };
         cargarEspacio();
     }, []);
 
     const fetchDataEspaciosID = async (idEspacio) => {
         try {
-            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getEspacioById`, {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getEspacioByIdCodmpleto`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,14 +60,20 @@ const DatosEspacio = () => {
 
             if (result.status === 1 && result.dataset) {
                 const espacioData = result.dataset;
-                console.log(espacioData, 'valor de datas')
                 setNombre(espacioData.nombre_espacio || 'Nombre no disponible');
                 setEncargado(espacioData.nombre_empleado || 'Encargado no disponible');
+                setApellidoEncargado(espacioData.apellido_empleado || 'Apellido no disponible');
                 setCapacidad(espacioData.capacidad_personas || 'Capacidad no disponible');
                 setTipoEspacio(espacioData.tipo_espacio || 'Tipo no disponible');
                 setGrupo(espacioData.nombre_curso || 'Grupo no disponible');
                 setEspecialidad(espacioData.nombre_especialidad || 'Especialidad no disponible');
                 setFoto(espacioData.foto_espacio || '');
+                setTelefonoEmpleado(espacioData.telefono || 'Teléfono no disponible');
+                setEstadoEmpleado(espacioData.estado_empleado || 'Estado no disponible');
+                setFotoEmpleado(espacioData.foto_empleado || '');
+                setinventario_doc(espacioData.inventario_doc || '');
+                console.log('Nombre de la imagen:', foto);
+
             } else {
                 Alert.alert('Error', result.message || 'No se encontraron datos del espacio.');
             }
@@ -68,6 +82,10 @@ const DatosEspacio = () => {
             Alert.alert('Error', 'No se pudieron obtener los datos.');
         }
     };
+    const openPdf = (url) => {
+        WebBrowser.openBrowserAsync(url);
+    };
+
 
     const verObservacion = () => {
         navigation.navigate('ObservHechas');
@@ -91,14 +109,16 @@ const DatosEspacio = () => {
                             textoBoton={'Descargar inventario'}
                             color={'DownLoad'}
                             iconName="download-outline"
-                        />
-                        <Image source={foto ? { uri: foto } : require('../../../../assets/default.png')} style={styles.espacioImage} resizeMode="contain" />
+                            accionBoton={() => openPdf(`${ip}/MyLoan-new/api/inventario/${inventario_doc}`)} />
+
+                        <Image source={{ uri: `${ip}/MyLoan-new/api/images/espacios/${foto}` }} style={styles.foto} />
+
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Nombre del laboratorio:</Text>
-                                <RNTextInput
-                                    value={nombre}
-                                    placeholder="Ingresa el nombre"
+                                <TextInput
+                                    Valor={nombre}
+                                    placeholder="Nombre asignado"
                                     editable={false}
                                     style={styles.input}
                                 />
@@ -107,18 +127,18 @@ const DatosEspacio = () => {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Encargado:</Text>
-                                <RNTextInput
-                                    value={encargado}
+                                <InputShort
+                                    Valor={encargado}
                                     placeholder="Instructor encargado"
                                     editable={false}
                                     style={styles.input}
                                 />
                             </View>
                             <View style={styles.column}>
-                                <Text>Capacidad de personas:  </Text>
-                                <RNTextInput
-                                    value={capacidad.toString()}
-                                    placeholder="Cantidad"
+                                <Text>Apellido del encargado:</Text>
+                                <InputShort
+                                    Valor={apellidoEncargado}
+                                    placeholder="Apellido"
                                     editable={false}
                                     style={styles.input}
                                 />
@@ -126,19 +146,19 @@ const DatosEspacio = () => {
                         </View>
                         <View style={styles.row}>
                             <View style={styles.column}>
-                                <Text>Tipo de espacio:</Text>
-                                <RNTextInput
-                                    value={tipoEspacio}
-                                    placeholder="Espacio"
+                                <Text>Capacidad de personas:  </Text>
+                                <InputShort
+                                    Valor={capacidad.toString()}
+                                    placeholder="Cantidad"
                                     editable={false}
                                     style={styles.input}
                                 />
                             </View>
                             <View style={styles.column}>
-                                <Text>Grupo cursante:</Text>
-                                <RNTextInput
-                                    value={grupo}
-                                    placeholder="2"
+                                <Text>Tipo de espacio:</Text>
+                                <InputShort
+                                    Valor={tipoEspacio}
+                                    placeholder="Espacio"
                                     editable={false}
                                     style={styles.input}
                                 />
@@ -147,9 +167,29 @@ const DatosEspacio = () => {
                         <View style={styles.row}>
                             <View style={styles.column}>
                                 <Text>Especialidad:</Text>
-                                <RNTextInput
-                                    value={especialidad}
+                                <InputShort
+                                    Valor={especialidad}
                                     placeholder="Nombre"
+                                    editable={false}
+                                    style={styles.input}
+                                />
+                            </View>
+                            <View style={styles.column}>
+                                <Text>Teléfono del encargado:</Text>
+                                <InputShort
+                                    Valor={telefonoEmpleado}
+                                    placeholder="Teléfono"
+                                    editable={false}
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.row}>
+                            <View style={styles.column}>
+                                <Text>Estado del encargado:</Text>
+                                <InputShort
+                                    Valor={estadoEmpleado}
+                                    placeholder="Estado"
                                     editable={false}
                                     style={styles.input}
                                 />
@@ -212,7 +252,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         elevation: 5,
         width: '100%',
-        marginBottom: 10,
+        marginBottom
+            : 10,
         paddingTop: 30,
     },
     espacioImage: {
@@ -237,7 +278,14 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 8,
         fontSize: 16,
-    }
+    }, foto: {
+        width: 150,
+        height: 150,
+        borderRadius: 10,
+        marginRight: 10,
+        resizeMode: 'cover',
+        alignItems: 'center',
+    },
 });
 
 export default DatosEspacio;
