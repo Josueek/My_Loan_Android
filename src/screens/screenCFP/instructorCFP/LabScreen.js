@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 import BackgroundImage from '../../../components/BackgroundImage';
+
 
 const LabEspaciosITR = () => {
     const [espacios, setEspacios] = useState([]);
@@ -10,9 +12,10 @@ const LabEspaciosITR = () => {
 
     useEffect(() => {
         // Fetch data from API
-        axios.get('http://192.168.0.12/myloan-new/api/services/espacios_services.php?action=getAllEspacios')
+        axios.get('http://10.10.2.143/myloan-new/api/services/espacios_services.php?action=getAllEspacios')
             .then(response => {
                 if (response.data.status === 1) {
+                    console.log('Datos obtenidos de la API:', response.data.dataset); // Mostrar los datos obtenidos de la API
                     setEspacios(response.data.dataset); // Update state with fetched data
                 } else {
                     console.error('Failed to fetch data:', response.data.message);
@@ -23,28 +26,41 @@ const LabEspaciosITR = () => {
             });
     }, []);
 
-    const handlePress = (id) => {
-        // Save the selected ID to local storage
-        localStorage.setItem('selectedEspacioId', id);
-        navigation.navigate('LabDetalles');
+    const handlePress = async (id) => {
+        try {
+            await AsyncStorage.setItem('selectedEspacioId', id.toString()); // Guardar el ID como string
+            navigation.navigate('LabDetalles'); // Navegar a la pantalla LabGeneral
+        } catch (error) {
+            console.error('Error al guardar el ID del espacio:', error);
+        }
     };
+    
+    
 
-    const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => handlePress(item.id_espacio)}>
-            <View style={styles.card}>
-                <Image source={{ uri: `http://192.168.0.12/myloan-new/api/images/espacios/${item.foto_espacio}` }} style={styles.image} />
-                <View style={styles.cardContent}>
-                    <Text style={[styles.tipoEspacio, item.tipo_espacio === 'Taller' ? styles.taller : styles.laboratorio]}>
-                        {item.tipo_espacio}
-                    </Text>
-                    <Text style={styles.nombreEspacio}>{item.nombre_espacio}</Text>
-                    <Text style={styles.capacidad}>Capacidad: {item.capacidad_personas} personas</Text>
-                    <Text style={styles.instructor}>Especialidad: {item.id_especialidad}</Text>
-                    <Text style={styles.instructor}>Empleado: {item.id_empleado}</Text>
+    const renderItem = ({ item }) => {
+        console.log('Espacio renderizado:', item); // Mostrar los datos de cada espacio renderizado
+        const imageUrl = `http://10.10.2.143/myloan-new/api/images/espacios/${item.foto_espacio}`;
+        console.log('Ruta de la imagen:', imageUrl); // Mostrar la ruta de la imagen
+    
+        return (
+            <TouchableOpacity onPress={() => handlePress(item.id_espacio)}>
+                
+                <View style={styles.card}>
+                    <Image source={{ uri: imageUrl }} style={styles.image} />
+                    <View style={styles.cardContent}>
+                        <Text style={[styles.tipoEspacio, item.tipo_espacio === 'Taller' ? styles.taller : styles.laboratorio]}>
+                            {item.tipo_espacio}
+                        </Text>
+                        <Text style={styles.nombreEspacio}>{item.nombre_espacio}</Text>
+                        <Text style={styles.capacidad}>Capacidad: {item.capacidad_personas} personas</Text>
+                        <Text style={styles.instructor}>Especialidad: {item.nombre_especialidad || 'N/A'}</Text>
+                        <Text style={styles.instructor}>Empleado: {item.nombre_empleado || 'N/A'}</Text>
+                    </View>
                 </View>
-            </View>
-        </TouchableOpacity>
-    );
+            </TouchableOpacity>
+        );
+    };
+    
 
     return (
         <BackgroundImage background="EspaciosITR">
@@ -82,7 +98,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: 380,
-        height: 150,
+        height: 180, // Hacemos la tarjeta más alta
     },
     image: {
         width: 150,
@@ -114,33 +130,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#7c7c7c',
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 5,
-    },
-    estadoOcupado: {
-        fontSize: 14,
-        color: 'red',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    estadoLibre: {
-        fontSize: 14,
-        color: 'green',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    curso: {
-        fontSize: 12,
-        color: '#7c7c7c',
-    },
     instructor: {
         marginTop: 10,
         fontSize: 12,
         color: '#7c7c7c',
-        marginTop: 10,
     },
     logo: {
         width: 125,

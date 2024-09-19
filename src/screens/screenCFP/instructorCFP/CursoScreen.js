@@ -22,7 +22,7 @@ const CursoScreen = () => {
 
         try {
             // Actualizar la URL de la API
-            const response = await fetch('http://192.168.0.12/myloan-new/api/services/curso_services.php?action=getAllCursos&buscar=', {
+            const response = await fetch('http://10.10.2.143/myloan-new/api/services/curso_services.php?action=getAllCursos&buscar=', {
                 method: 'GET',
             });
 
