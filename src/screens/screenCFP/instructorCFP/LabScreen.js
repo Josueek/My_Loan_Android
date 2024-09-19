@@ -1,77 +1,172 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 import BackgroundImage from '../../../components/BackgroundImage';
-
+import * as Constantes from '../../../utils/constantes';
+import CardComponent from '../../../components/Cards/EspacioCard';
+import { RefreshControl } from 'react-native-gesture-handler';
+import Buttons from '../../../components/Buttons/Buttons';
 
 const LabEspaciosITR = () => {
-    const [espacios, setEspacios] = useState([]);
+    //Datos del usuario
+    const [userData, setUserData] = useState({
+        id_empleado: '',
+        nombre: '',
+        apellido: '',
+        especialidad: ''
+    });
+    const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const ip = Constantes.IP;
     const navigation = useNavigation();
+    const [data, setData] = useState([]);
 
-    useEffect(() => {
-        // Fetch data from API
-        axios.get('http://10.10.2.143/myloan-new/api/services/espacios_services.php?action=getAllEspacios')
-            .then(response => {
-                if (response.data.status === 1) {
-                    console.log('Datos obtenidos de la API:', response.data.dataset); // Mostrar los datos obtenidos de la API
-                    setEspacios(response.data.dataset); // Update state with fetched data
-                } else {
-                    console.error('Failed to fetch data:', response.data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }, []);
-
-    const handlePress = async (id) => {
+    //Peticion para recibir los datos del empleado
+    const fetchUserData = async (userId) => {
         try {
-            await AsyncStorage.setItem('selectedEspacioId', id.toString()); // Guardar el ID como string
-            navigation.navigate('LabDetalles'); // Navegar a la pantalla LabGeneral
+            const response = await fetch(`${ip}/MyLoan-new/api/services/miperfil_services.php?action=getProfile&id=${userId}`);
+            const result = await response.json();
+
+            if (result.status === 1) {
+                setUserData({
+                    id_datos_empleado: result.dataset.id_datos_empleado,
+                    nombre: result.dataset.nombre,
+                    apellido: result.dataset.apellido,
+                    especialidad: result.dataset.especialidad || 'Especialidad no asignada', // Valor predeterminado si es undefined
+                });
+                console.log('usuario id desde el fetch: ', result.dataset.id_datos_empleado);
+                fetchDataEspacios(result.dataset.id_datos_empleado); // Cargar los espacios después de obtener los datos del usuario
+            } else {
+                console.error('Unexpected data format:', result);
+                setError('Error al cargar datos');
+            }
+            setLoading(false);
         } catch (error) {
-            console.error('Error al guardar el ID del espacio:', error);
+            console.error(error);
+            setError('Error al cargar datos');
+            setLoading(false);
         }
     };
-    
-    
 
-    const renderItem = ({ item }) => {
-        console.log('Espacio renderizado:', item); // Mostrar los datos de cada espacio renderizado
-        const imageUrl = `http://10.10.2.143/myloan-new/api/images/espacios/${item.foto_espacio}`;
-        console.log('Ruta de la imagen:', imageUrl); // Mostrar la ruta de la imagen
-    
-        return (
-            <TouchableOpacity onPress={() => handlePress(item.id_espacio)}>
-                
-                <View style={styles.card}>
-                    <Image source={{ uri: imageUrl }} style={styles.image} />
-                    <View style={styles.cardContent}>
-                        <Text style={[styles.tipoEspacio, item.tipo_espacio === 'Taller' ? styles.taller : styles.laboratorio]}>
-                            {item.tipo_espacio}
-                        </Text>
-                        <Text style={styles.nombreEspacio}>{item.nombre_espacio}</Text>
-                        <Text style={styles.capacidad}>Capacidad: {item.capacidad_personas} personas</Text>
-                        <Text style={styles.instructor}>Especialidad: {item.nombre_especialidad || 'N/A'}</Text>
-                        <Text style={styles.instructor}>Empleado: {item.nombre_empleado || 'N/A'}</Text>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        );
+    //Cargamos los datos del espacio acorde al Id del empleado
+    const fetchDataEspacios = async (userId) => {
+        try {
+            console.log('Solicitando datos de espacios para el usuario ID:', userId);
+            const response = await fetch(`${ip}/MyLoan-new/api/services/espacios_services.php?action=getAllEspaciosByIdUsuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idempleado: userId })
+            });
+
+            const result = await response.json();
+            console.log('Respuesta de la API:', result);  // Imprime toda la respuesta para depurar
+
+            if (result.status === 1 && result.dataset && Array.isArray(result.dataset.dataset)) {
+                const mappedData = result.dataset.dataset.map(item => ({
+                    id: item.id_espacio,
+                    nombre: item.nombre_espacio,
+                    capacidad: item.capacidad_personas,
+                    tipo: item.tipo_espacio,
+                    inventario: item.inventario_doc,
+                    foto: item.foto_espacio,
+                    nombre_especialidad: item.nombre_especialidad,
+                    nombre_institucion: item.nombre_institucion,
+                    nombre_empleado: item.nombre_empleado,
+                }));
+                setData(mappedData);
+            } else if (result.dataset && result.dataset.message === "No se encontraron registros") {
+                console.log(result.dataset.message);
+                setError('No se encontraron espacios asignados');
+                setData([]); // Limpia los datos si no hay registros
+            } else {
+                console.error('Formato incorrecto:', result);
+                setError('Error al cargar datos');
+                setData([]); // Limpia los datos si hay un error
+            }
+            setLoading(false);
+            setRefreshing(false);
+        } catch (error) {
+            console.error(error);
+            setError('Error al cargar datos');
+            setLoading(false);
+            setRefreshing(false);
+        }
     };
-    
+
+
+    useEffect(() => {
+        const userId = 1; // Suponiendo que este es el ID del usuario autenticado
+        fetchUserData(userId); // Cargar los datos del usuario
+    }, []);
+
+    // Guardamos el id del espacio selecccionado y nos dirigimos a la siguiete pantalla
+    const Observacion = async (item) => {
+        try {
+            //Se guarda en la libreia de AsyncStorage
+            await AsyncStorage.setItem('Id_espacio', item.id.toString());
+            //Se imprime para verificar el valor
+            console.log('Id del espacio:', item.id);
+            navigation.navigate('DatosLab');
+        } catch (error) {
+            Alert.alert('Error', 'No se obtuvo la información del espacio')
+        }
+    };
+
+
+    //Metodo para actualizar los datos
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchDataEspacios(userData.id_datos_empleado); // Usar el ID del usuario cargado
+    };
+
+    //Condición para mostrar un icono cargando
+    if (loading) {
+        return (
+            <BackgroundImage background="InstructoritrScreen">
+                <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            </BackgroundImage>
+        );
+    }
+
+    //Texto a mostrar si no existen registros
+    const ListEmptyComponent = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aún no tienes espacios asignados</Text>
+        </View>
+    );
 
     return (
-        <BackgroundImage background="EspaciosITR">
+        <BackgroundImage background="AdminCFP">
             <View style={styles.container}>
-                <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
+                <View style={styles.Logos}>
+                    <Image source={require('../../../../assets/myloanLogo.png')} style={styles.logo} />
+                    <Image source={require('../../../../assets/LogoRicaldone.png')} style={styles.logoRical} />
+                </View>
+                <View style={styles.Datos}>
+                    <Text style={styles.Nombre}>Instructor: {userData.nombre} {userData.apellido}</Text>
+                    <Text style={styles.Nombre}>Especialidad: {userData.especialidad}</Text>
+                </View>
                 <Text style={styles.title}>Listado de espacios asignados</Text>
                 <FlatList
-                    data={espacios}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id_espacio.toString()}
-                    contentContainerStyle={styles.list}
+                    data={data}
+                    numColumns={1}
+                    renderItem={({ item }) =>
+                        <TouchableOpacity onPress={() => Observacion(item)}>
+                            <CardComponent item={item} />
+                        </TouchableOpacity>
+                    }
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.FlatListContent}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                    ListEmptyComponent={ListEmptyComponent}
                 />
             </View>
         </BackgroundImage>
@@ -83,57 +178,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30,
         alignItems: 'center',
-    },
-    list: {
-        alignItems: 'center',
-    },
-    card: {
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginVertical: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
-        width: 380,
-        height: 180, // Hacemos la tarjeta más alta
-    },
-    image: {
-        width: 150,
-        height: 150,
-    },
-    cardContent: {
-        padding: 20,
-        marginBottom: 50,
-        flex: 1,
-    },
-    tipoEspacio: {
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontSize: 15,
-    },
-    taller: {
-        color: '#FFBD33',
-    },
-    laboratorio: {
-        color: '#33A1FF',
-    },
-    nombreEspacio: {
-        fontSize: 18,
-        color: '#000',
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    capacidad: {
-        fontSize: 14,
-        color: '#7c7c7c',
-    },
-    instructor: {
-        marginTop: 10,
-        fontSize: 12,
-        color: '#7c7c7c',
+        justifyContent: 'space-between',
     },
     logo: {
         width: 125,
@@ -144,9 +189,39 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 23,
         fontWeight: 'bold',
-        padding: 20,
+        padding: 30,
+    },
+    logoRical: {
+        width: 100,
+        height: 100,
+        marginTop: 50,
+        marginBottom: 30,
+    },
+    Logos: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+    Cerrar: {
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 40,
+    },
+    Nombre: {
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    Datos: {
+        textAlign: 'center',
         alignItems: 'center',
     },
+    emptyText: {
+        fontWeight: '500',
+        fontSize: 15,
+        padding: 80,
+    }
 });
 
 export default LabEspaciosITR;

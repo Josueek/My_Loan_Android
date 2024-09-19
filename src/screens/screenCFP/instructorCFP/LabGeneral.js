@@ -4,10 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Input from '../../../components/Inputs/TextInput';
 import InputShort from '../../../components/Inputs/InputShort';
+import * as Constantes from '../../../utils/constantes';
 
 const LabGeneral = () => {
     const [labData, setLabData] = useState({});
     const [loading, setLoading] = useState(true);
+    const ip = Constantes.IP;
 
     useEffect(() => {
         const fetchLabData = async () => {
@@ -18,7 +20,7 @@ const LabGeneral = () => {
 
                 if (idEspacio) {
                     // Realizar la petición a la API usando el ID del espacio
-                    const response = await axios.get(`http://10.10.2.143/myloan-new/api/services/espacios_services.php?action=getEspacioById&id=${idEspacio}`);
+                    const response = await axios.get(`${ip}/Myloan-new/api/services/espacios_services.php?action=getEspacioById&id=${idEspacio}`);
                     console.log('Respuesta de la API:', response.data); // Depuración: Verificar la respuesta de la API
 
                     if (response.data.status === 1) {

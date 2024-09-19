@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackgroundImage from '../../../components/BackgroundImage';
 import Buttons from '../../../components/Buttons/Buttons';
@@ -60,10 +60,10 @@ const EspaciosAsignados = ({ navigation }) => {
                 },
                 body: JSON.stringify({ idempleado: userId })
             });
-    
+
             const result = await response.json();
             console.log('Respuesta de la API:', result);  // Imprime toda la respuesta para depurar
-    
+
             if (result.status === 1 && result.dataset && Array.isArray(result.dataset.dataset)) {
                 const mappedData = result.dataset.dataset.map(item => ({
                     id: item.id_espacio,
@@ -95,7 +95,28 @@ const EspaciosAsignados = ({ navigation }) => {
             setRefreshing(false);
         }
     };
-    
+
+    //Cerrar sesion
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(`${ip}/MyLoan-new/api/services/miperfil_services.php?action=logOut`, {
+                method: 'GET'
+            });
+            const data = await response.json();
+
+            if (data.status) {
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                });
+                Alert.alert('Sesión cerrada');
+            } else {
+                Alert.alert('Error', data.error);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Ocurrió un error al cerrar la sesión');
+        }
+    };
 
     useEffect(() => {
         const userId = 1; // Suponiendo que este es el ID del usuario autenticado
@@ -180,7 +201,7 @@ const EspaciosAsignados = ({ navigation }) => {
                     <Buttons
                         color={'Rojo'}
                         textoBoton={"Cerrar sesión"}
-                        accionBoton={CerrarSession} // Asegúrate de pasar la función onPress
+                        accionBoton={handleLogout} // Asegúrate de pasar la función onPress
                     />
                 </View>
             </View>
