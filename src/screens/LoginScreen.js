@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert, Image } from 'react-native';
-//Componente para establecer los fondos de pantalla
+import { StyleSheet, Text, View, Alert, Image, ScrollView } from 'react-native';
+// Componente para establecer los fondos de pantalla
 import BackgroundImage from '../components/BackgroundImage';
-//Componente Input
+// Componente Input
 import Input from '../components/Inputs/TextInput';
-//Componente Button
+// Componente Button
 import Buttons from '../components/Buttons/Buttons';
-//Plantilla para la hacer las peticiones
+// Plantilla para hacer las peticiones
 import fetchData from '../utils/fetchData';
 // Guardar el id del cliente iniciado
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
-    const [Correo, setCorreo] = useState(''); // Estado para el nombre de usuario
+    const [Correo, setCorreo] = useState(''); // Estado para el correo electrónico
     const [clave, setClave] = useState(''); // Estado para la contraseña
 
     const Fast = () => {
@@ -28,11 +28,11 @@ export default function LoginScreen({ navigation }) {
         }
 
         const form = new FormData();
-        // Mandamos los parametros de los datos de correo y clave
+        // Mandamos los parámetros de los datos de correo y clave
         form.append('correo_electronico', Correo);
         form.append('contrasena', clave);
 
-        // Parametros de la API
+        // Parámetros de la API
         const response = await fetchData('login_services', 'login', form);
 
         console.log('Login response:', response); // Agrega un console.log para depuración
@@ -41,25 +41,25 @@ export default function LoginScreen({ navigation }) {
         const institucion = parseInt(response.institucion, 10);
         const cargo = parseInt(response.cargo, 10);
 
-        //Condicional para verificar los niveles de usuario
+        // Condicional para verificar los niveles de usuario
         if (response.status === 1) {
-            //Si la sesion es correcta, guardamos el id del usuario logueado
+            // Si la sesión es correcta, guardamos el id del usuario logueado
             await AsyncStorage.setItem('user_id', response.id_usuario.toString());
 
-            //institucion de Ricaldone === 1
+            // Institución de Ricaldone === 1
             if (institucion === 1) {
-                //Cargo === 1 es Admin
+                // Cargo === 1 es Admin
                 if (cargo === 1 || cargo === 2) {
-                    //Muestra el nombre y luego pasa al menu correspondiente
+                    // Muestra el nombre y luego pasa al menú correspondiente
                     Alert.alert('Bienvenido', response.nombre);
                     navigation.navigate('AdminTabNavigation'); // Admin ITR
                 } else if (cargo === 3) {
-                    Alert.alert('Bienvenido, ', response.nombre);
+                    Alert.alert('Bienvenido', response.nombre);
                     navigation.navigate('InstructoritrStack'); // Instructor ITR
                 }
-            } //Institucion === 2 es CFP
+            } // Institución === 2 es CFP
             else if (institucion === 2) {
-                //Cargo 1 es admin 
+                // Cargo 1 es Admin
                 if (cargo === 1) {
                     Alert.alert('Bienvenido', response.nombre);
                     navigation.navigate('AdmincfpStack'); // Admin CFP
@@ -68,7 +68,7 @@ export default function LoginScreen({ navigation }) {
                     navigation.navigate('InstructorcfpStack'); // Instructor CFP
                 }
             } else {
-                Alert.alert('Acceso denegado, cuenta no valida');
+                Alert.alert('Acceso denegado, cuenta no válida');
                 console.log('Access denied: Invalid institution or role'); // Agrega un console.log para depuración
             }
         } else {
@@ -78,15 +78,17 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <BackgroundImage background="login">
-            <View style={styles.container}>
-                <Image
-                    source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
-                    style={styles.logo}
-                />
+            <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
+                        style={styles.logo}
+                    />
+                </View>
                 <View style={styles.card}>
                     <Text style={styles.title}>Ingresa tu correo electrónico</Text>
                     <Input
-                        placeHolder="Correo electrónico" // Campo de entrada para el nombre de usuario
+                        placeHolder="Correo electrónico" // Campo de entrada para el correo electrónico
                         valor={Correo}
                         setTextChange={setCorreo}
                         contra={false}
@@ -105,16 +107,21 @@ export default function LoginScreen({ navigation }) {
                         color="Amarillo"
                     />
                 </View>
-            </View>
+            </ScrollView>
         </BackgroundImage>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // Ocupa todo el espacio disponible
+        flexGrow: 1, // Permite al ScrollView crecer según el contenido
         justifyContent: 'center', // Centra el contenido verticalmente
         alignItems: 'center', // Centra el contenido horizontalmente
+        padding: 20, // Añade padding para asegurar que el contenido no toque los bordes
+    },
+    logoContainer: {
+        alignItems: 'center',
+        marginBottom: 20, // Añade un espacio adicional para el logo
     },
     title: {
         fontSize: 15,
@@ -127,7 +134,6 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         resizeMode: 'contain',
-        marginBottom: 20, // Estilo del logo
     },
     card: {
         backgroundColor: '#fff',
@@ -140,7 +146,6 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: '100%',
         alignItems: 'center',
-        height: '35%',
         justifyContent: 'center', // Estilo de la tarjeta que contiene el formulario de inicio de sesión
     },
     Iniciar: {

@@ -138,10 +138,6 @@ const EspaciosAsignados = ({ navigation }) => {
 
     };
 
-    //Cerrar sesión
-    const CerrarSession = () => {
-        navigation.navigate('Login');
-    };
 
     //Metodo para actualizar los datos
     const onRefresh = () => {

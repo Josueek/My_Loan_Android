@@ -38,7 +38,7 @@ const ObservHechas = () => {
 
                 {/* Campo para comentarios */}
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Añade un comentario o observación</Text>
+                    <Text style={styles.label}>Añade una observación o comentario</Text>
                     <TextInput
                         style={styles.textArea}
                         placeholder="Añadir observación o comentario"
