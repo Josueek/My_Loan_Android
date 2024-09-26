@@ -4,7 +4,9 @@
  */
 
 //Josue
+//export const IP = 'http://myloan-web.online';
 export const IP = 'http://10.10.4.230';
+
 
 //export const IP = 'http://192.168.1.94';
 //colegio lennyn

@@ -16,12 +16,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/myloanIcon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "myloan.android.com"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f8b3690f-2829-455a-ba8a-2f64d6c30e75"
+      }
     }
   }
 }
