@@ -30,7 +30,7 @@ export default function EditarCurso() {
                 return;
             }
 
-            const response = await fetch(`${ip}/MyLoan-new/api/services/curso_services.php?action=getCursoCompleto&id=${id}`);
+            const response = await fetch(`${ip}/MyLoan-new/api/services/curso_services.php?action=getCursoByIdCompleto&id=${id}`);
             const result = await response.json();
 
             if (result.status === 1) {

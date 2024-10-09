@@ -1,24 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Alert, Image, ScrollView } from 'react-native';
-// Componente para establecer los fondos de pantalla
 import BackgroundImage from '../components/BackgroundImage';
-// Componente Input
 import Input from '../components/Inputs/TextInput';
-// Componente Button
 import Buttons from '../components/Buttons/Buttons';
-// Plantilla para hacer las peticiones
-import fetchData from '../utils/fetchData';
-// Guardar el id del cliente iniciado
+import fetchData from '../utils/fetchData'; // Asegúrate de que esta función está bien configurada para hacer fetch
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Componente principal de la pantalla de inicio de sesión
 export default function LoginScreen({ navigation }) {
     const [Correo, setCorreo] = useState(''); // Estado para el correo electrónico
     const [clave, setClave] = useState(''); // Estado para la contraseña
-
-    const Fast = () => {
-        navigation.navigate('AdminTabNavigation');
-    }
 
     // Función para manejar el inicio de sesión
     const handleLogin = async () => {
@@ -27,52 +17,60 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        const form = new FormData();
-        // Mandamos los parámetros de los datos de correo y clave
-        form.append('correo_electronico', Correo);
-        form.append('contrasena', clave);
+        try {
+            const form = new FormData();
+            form.append('correo_electronico', Correo);
+            form.append('contrasena', clave);
 
-        // Parámetros de la API
-        const response = await fetchData('login_services', 'login', form);
+            // Enviar la petición al backend (Asegúrate que esta URL es correcta)
+            const response = await fetchData('login_services', 'login', form); 
 
-        console.log('Login response:', response); // Agrega un console.log para depuración
+            // Verificar si el login fue exitoso o falló por bloqueo
+            if (response.status === 1) {
+                // Caso de éxito: manejar roles e instituciones 
+                const institucion = parseInt(response.institucion);
+                const cargo = parseInt(response.cargo);
+                console.log('Response:', response);
 
-        // Convertir valores a números para comparación
-        const institucion = parseInt(response.institucion, 10);
-        const cargo = parseInt(response.cargo, 10);
-
-        // Condicional para verificar los niveles de usuario
-        if (response.status === 1) {
-            // Si la sesión es correcta, guardamos el id del usuario logueado
-            await AsyncStorage.setItem('user_id', response.id_usuario.toString());
-
-            // Institución de Ricaldone === 1
-            if (institucion === 1) {
-                // Cargo === 1 es Admin
-                if (cargo === 1 || cargo === 2) {
-                    // Muestra el nombre y luego pasa al menú correspondiente
-                    Alert.alert('Bienvenido', response.nombre);
-                    navigation.navigate('AdminTabNavigation'); // Admin ITR
-                } else if (cargo === 3) {
-                    Alert.alert('Bienvenido', response.nombre);
-                    navigation.navigate('InstructoritrStack'); // Instructor ITR
+                // Guardar el id del usuario en AsyncStorage
+                if (response.id_usuario) {
+                    await AsyncStorage.setItem('user_id', response.id_usuario.toString());
+                } else {
+                    console.log('id_usuario no está definido en la respuesta');
+                    console.log(response.id_usuario)
                 }
-            } // Institución === 2 es CFP
-            else if (institucion === 2) {
-                // Cargo 1 es Admin
-                if (cargo === 1) {
-                    Alert.alert('Bienvenido', response.nombre);
-                    navigation.navigate('AdmincfpStack'); // Admin CFP
-                } else if (cargo === 3) {
-                    Alert.alert('Bienvenido', response.nombre);
-                    navigation.navigate('InstructorcfpStack'); // Instructor CFP
+
+                // Navegación según el rol y la institución
+                if (institucion === 1) { // Institución ITR
+                    if (cargo === 1 || cargo === 2) { // Administrador
+                        Alert.alert('Bienvenido', response.nombre);
+                        navigation.navigate('AdminTabNavigation'); // Redirige al Admin de ITR
+                    } else if (cargo === 3) { // Instructor
+                        Alert.alert('Bienvenido', response.nombre);
+                        navigation.navigate('InstructoritrStack'); // Redirige al Instructor de ITR
+                    }
+                } else if (institucion === 2) { // Institución CFP
+                    if (cargo === 1 || cargo === 2) { // Administrador
+                        Alert.alert('Bienvenido', response.nombre);
+                        navigation.navigate('AdmincfpStack'); // Redirige al Admin de CFP
+                    } else if (cargo === 3) { // Instructor.
+                        Alert.alert('Bienvenido', response.nombre);
+                        navigation.navigate('InstructorcfpStack'); // Redirige al Instructor de CFP
+                    }
+                } else {
+                    Alert.alert('Acceso denegado', 'Cuenta no válida');
                 }
+
+            } else if (response.error) {
+                // Si hubo un error en el inicio de sesión (cuenta bloqueada, etc.)
+                Alert.alert('Error de inicio de sesión', response.error);
+                console.log('Error: ', response.error);
             } else {
-                Alert.alert('Acceso denegado, cuenta no válida');
-                console.log('Access denied: Invalid institution or role'); // Agrega un console.log para depuración
+                Alert.alert('Error', 'Credenciales incorrectas. Verifica tu correo o contraseña.');
             }
-        } else {
-            Alert.alert('Inicio de sesión fallido', response.error || 'Error desconocido');
+        } catch (error) {
+            Alert.alert('Error de conexión', 'Ocurrió un problema al conectarse con el servidor.');
+            console.error('Login error:', error);
         }
     };
 
@@ -81,27 +79,27 @@ export default function LoginScreen({ navigation }) {
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/myloanLogo.png')} // Muestra el logo de la aplicación
+                        source={require('../../assets/myloanLogo.png')} // Asegúrate de que la ruta del logo es correcta
                         style={styles.logo}
                     />
                 </View>
                 <View style={styles.card}>
                     <Text style={styles.title}>Ingresa tu correo electrónico</Text>
                     <Input
-                        placeHolder="Correo electrónico" // Campo de entrada para el correo electrónico
+                        placeHolder="Correo electrónico"
                         valor={Correo}
                         setTextChange={setCorreo}
                         contra={false}
                     />
                     <Text style={styles.title}>Ingresa tu contraseña</Text>
                     <Input
-                        placeHolder="Contraseña" // Campo de entrada para la contraseña
+                        placeHolder="Contraseña"
                         valor={clave}
                         setTextChange={setClave}
                         contra={true}
                     />
                     <Buttons
-                        textoBoton={'Iniciar sesión'} // Botón para iniciar sesión
+                        textoBoton={'Iniciar sesión'}
                         accionBoton={handleLogin}
                         style={styles.Iniciar}
                         color="Amarillo"
@@ -114,21 +112,21 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1, // Permite al ScrollView crecer según el contenido
-        justifyContent: 'center', // Centra el contenido verticalmente
-        alignItems: 'center', // Centra el contenido horizontalmente
-        padding: 20, // Añade padding para asegurar que el contenido no toque los bordes
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
     },
     logoContainer: {
         alignItems: 'center',
-        marginBottom: 20, // Añade un espacio adicional para el logo
+        marginBottom: 20,
     },
     title: {
         fontSize: 15,
         fontWeight: 'bold',
         marginBottom: 10,
         marginTop: 10,
-        color: '#000', // Estilo del texto del título
+        color: '#000',
     },
     logo: {
         width: 150,
@@ -146,9 +144,9 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: '100%',
         alignItems: 'center',
-        justifyContent: 'center', // Estilo de la tarjeta que contiene el formulario de inicio de sesión
+        justifyContent: 'center',
     },
     Iniciar: {
-        marginTop: 20, // Estilo del botón de inicio de sesión
+        marginTop: 20,
     }
 });
